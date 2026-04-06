@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Email Verification</title>
+</head>
+
+<body style="margin:0; padding:0; font-family:Arial, sans-serif; background-color:#f4f6f8;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f6f8; padding:40px 0;">
+<tr>
+<td align="center">
+
+<table width="500" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:8px; padding:30px;">
+
+<tr>
+<td align="center" style="font-size:24px; font-weight:bold; color:#2c3e50;">
+Student Management Portal
+</td>
+</tr>
+
+<tr>
+<td style="padding-top:20px; font-size:16px; color:#333;">
+Hello,{{.Email}},
+</td>
+</tr>
+
+<tr>
+<td style="padding-top:10px; font-size:15px; color:#555;">
+Use the OTP below to verify your email address.
+</td>
+</tr>
+
+<tr>
+<td align="center" style="padding:25px 0;">
+<div style="font-size:28px; letter-spacing:5px; font-weight:bold; color:#1465d0;">
+{{.OTP}}
+</div>
+</td>
+</tr>
+
+<tr>
+<td style="font-size:14px; color:#777;">
+This OTP will expire in <b>5 minutes</b>.
+</td>
+</tr>
+
+<tr>
+<td style="padding-top:30px; font-size:12px; color:#999; text-align:center;">
+© 2026 Student Management Portal
+</td>
+</tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>
