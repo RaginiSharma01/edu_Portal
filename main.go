@@ -17,27 +17,29 @@ func main() {
 
 	fmt.Println("Starting Student Management Portal")
 
-	cfg := config.LoadConfig() // load config
+	cfg := config.LoadConfig()
 
-	database, err := db.ConnectDb(cfg) // connect postgres
+	database, err := db.ConnectDb(cfg)
 	if err != nil {
 		log.Fatal("Database connection failed:", err)
 	}
-	// err = db.SeedAdmin(database.Pool)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 
-	redisClient := db.InitRedis(cfg) // connect redis
+	redisClient := db.InitRedis(cfg)
 
-	userRepo := repository.NewUserRepo(database.Pool) // repositories
+	// USER MODULE
+	userRepo := repository.NewUserRepo(database.Pool)
+	userService := service.NewUserService(userRepo, redisClient)
+	userHandler := handler.NewUserHandler(userService)
 
-	userService := service.NewUserService(userRepo, redisClient) // services
-
-	userHandler := handler.NewUserHandler(userService) // handlers
+	// CLASSROOM MODULE
+	classroomRepo := repository.NewClassroomRepo(database.Pool)
+	classroomService := service.NewClassroomService(classroomRepo)
+	classroomHandler := handler.NewClassroomHandler(classroomService)
 
 	app := fiber.New()
 
-	routes.SetupUserRoutes(app, userHandler) // routes
+	// ROUTES
+	routes.SetupUserRoutes(app, userHandler, classroomHandler)
+
 	log.Fatal(app.Listen(cfg.ServerPort))
 }
