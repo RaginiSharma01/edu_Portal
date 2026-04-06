@@ -18,4 +18,5 @@ type User struct {
 	Email      string `json:"email"`
 	Password   string `json:"-"`
 	IsVerified bool   `json:"isVerified"`
+	Role       string `json:"role"`
 }

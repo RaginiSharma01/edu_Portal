@@ -80,9 +80,9 @@ func (r *UserRepo) OnboardingUser(ctx context.Context, user models.TeacherOnboar
 func (r *UserRepo) GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
 
 	query := `
-	SELECT id, email, password, email_verified
-	FROM users
-	WHERE email=$1
+	SELECT id, email, password, role, email_verified
+FROM users
+WHERE email=$1
 	`
 
 	var user models.User
@@ -91,6 +91,7 @@ func (r *UserRepo) GetUserByEmail(ctx context.Context, email string) (*models.Us
 		&user.ID,
 		&user.Email,
 		&user.Password,
+		&user.Role,
 		&user.IsVerified,
 	)
 

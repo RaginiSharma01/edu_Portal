@@ -32,4 +32,28 @@ CREATE TABLE students (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+CREATE EXTENSION IF NOT EXISTS "pgcrypto"; 
+-- // beacuse we r using gen_random_uuid()
+
+
+ALTER TABLE users
+DROP CONSTRAINT users_role_check;
+
+ALTER TABLE users
+ADD CONSTRAINT users_role_check
+CHECK (role IN ('admin','teacher','student'));
+
+
+
+INSERT INTO users
+(first_name, last_name, email, phone, password, role, email_verified)
+VALUES
+(
+ 'Admin',
+ 'System',
+ 'admin@school.com',
+ '9999999999',
+ '$2a$10$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+ 'admin',
+ true
+);

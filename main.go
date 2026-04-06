@@ -23,6 +23,10 @@ func main() {
 	if err != nil {
 		log.Fatal("Database connection failed:", err)
 	}
+	// err = db.SeedAdmin(database.Pool)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	redisClient := db.InitRedis(cfg) // connect redis
 
