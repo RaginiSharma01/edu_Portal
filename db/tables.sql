@@ -19,3 +19,17 @@ CREATE TABLE teachers (
     subjects_teaching TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE students (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    father_name VARCHAR(100),
+    mother_name VARCHAR(100),
+    guardian_name VARCHAR(100),
+    occupation VARCHAR(100),
+    height INT,
+    weight INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";

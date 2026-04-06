@@ -16,6 +16,8 @@ func SetupUserRoutes(app *fiber.App, userHandler *handler.UserHandler) {
 	signup := onboarding.Group("/signup")
 
 	signup.Post("/teacher", userHandler.OnboardTeacher)
+	signup.Post("/student", userHandler.OnboardStudent)
 	onboarding.Post("/verify-otp", userHandler.VerifyOTP)
 	onboarding.Post("/login", userHandler.Login)
+
 }

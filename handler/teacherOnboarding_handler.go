@@ -83,3 +83,25 @@ func (h *UserHandler) Login(c fiber.Ctx) error {
 		"token":   token,
 	})
 }
+func (h *UserHandler) OnboardStudent(c fiber.Ctx) error {
+
+	var student models.StudentOnboarding
+
+	if err := c.Bind().Body(&student); err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "invalid request",
+		})
+	}
+
+	userID, err := h.Service.OnboardStudent(c.Context(), student)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "OTP sent to email",
+		"user_id": userID,
+	})
+}

@@ -112,3 +112,68 @@ func (r *UserRepo) VerifyUser(ctx context.Context, email string) error {
 	_, err := r.DB.Exec(ctx, query, email)
 	return err
 }
+
+func (r *UserRepo) OnboardStudent(ctx context.Context, student models.StudentOnboarding) (string, error) {
+
+	tx, err := r.DB.Begin(ctx)
+	if err != nil {
+		return "", err
+	}
+	defer tx.Rollback(ctx)
+
+	var userID string
+
+	userQuery := `
+	INSERT INTO users
+	(first_name, last_name, email, phone, age, date_of_birth, address, password, role)
+	VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+	RETURNING id
+	`
+
+	err = tx.QueryRow(
+		ctx,
+		userQuery,
+		student.FirstName,
+		student.LastName,
+		student.Email,
+		student.Phone,
+		student.Age,
+		student.DateOfBirth,
+		student.Address,
+		student.Password,
+		"student",
+	).Scan(&userID)
+
+	if err != nil {
+		return "", err
+	}
+
+	studentQuery := `
+	INSERT INTO students
+	(user_id, father_name, mother_name, guardian_name, occupation, height, weight)
+	VALUES ($1,$2,$3,$4,$5,$6,$7)
+	`
+
+	_, err = tx.Exec(
+		ctx,
+		studentQuery,
+		userID,
+		student.FatherName,
+		student.MotherName,
+		student.GuardianName,
+		student.Occupation,
+		student.Height,
+		student.Weight,
+	)
+
+	if err != nil {
+		return "", err
+	}
+
+	err = tx.Commit(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	return userID, nil
+}

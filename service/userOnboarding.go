@@ -131,3 +131,39 @@ func (s *UserService) Login(ctx context.Context, email string, password string) 
 
 	return token, nil
 }
+func (s *UserService) OnboardStudent(ctx context.Context, student models.StudentOnboarding) (string, error) {
+
+	if student.Email == "" {
+		return "", errors.New("email required")
+	}
+
+	if student.Password == "" || len(student.Password) < 8 {
+		return "", errors.New("password must be at least 8 characters")
+	}
+
+	hashedPassword, err := utils.HashPassword(student.Password)
+	if err != nil {
+		return "", err
+	}
+
+	student.Password = hashedPassword
+
+	userID, err := s.userRepo.OnboardStudent(ctx, student)
+	if err != nil {
+		return "", err
+	}
+
+	otp := utils.GenerateOTP()
+
+	err = utils.StoreOTP(ctx, s.redis, student.Email, otp)
+	if err != nil {
+		return "", err
+	}
+
+	err = utils.SendOTPEmail(student.Email, otp)
+	if err != nil {
+		return "", err
+	}
+
+	return userID, nil
+}
