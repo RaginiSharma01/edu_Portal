@@ -14,6 +14,8 @@ type TeacherOnboarding struct {
 }
 
 type User struct {
-	ID    string `json:"id"`
-	Email string `json:"email"`
+	ID         string `json:"id"`
+	Email      string `json:"email"`
+	Password   string `json:"-"`
+	IsVerified bool   `json:"isVerified"`
 }

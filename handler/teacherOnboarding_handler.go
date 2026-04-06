@@ -49,7 +49,7 @@ func (h *UserHandler) VerifyOTP(c fiber.Ctx) error {
 		})
 	}
 
-	token, err := h.Service.VerifyOTP(c.Context(), req.Email, req.OTP)
+	err := h.Service.VerifyOTP(c.Context(), req.Email, req.OTP)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": err.Error(),
@@ -57,7 +57,29 @@ func (h *UserHandler) VerifyOTP(c fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"message": "OTP verified",
+		"message": "email verified successfully",
+	})
+}
+
+func (h *UserHandler) Login(c fiber.Ctx) error {
+
+	var req models.LoginRequest
+
+	if err := c.Bind().Body(&req); err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "invalid request",
+		})
+	}
+
+	token, err := h.Service.Login(c.Context(), req.Email, req.Password)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "login successful",
 		"token":   token,
 	})
 }

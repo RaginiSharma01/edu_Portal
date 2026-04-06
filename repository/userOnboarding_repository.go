@@ -79,13 +79,19 @@ func (r *UserRepo) OnboardingUser(ctx context.Context, user models.TeacherOnboar
 
 func (r *UserRepo) GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
 
-	query := `SELECT id, email FROM users WHERE email=$1`
+	query := `
+	SELECT id, email, password, email_verified
+	FROM users
+	WHERE email=$1
+	`
 
 	var user models.User
 
 	err := r.DB.QueryRow(ctx, query, email).Scan(
 		&user.ID,
 		&user.Email,
+		&user.Password,
+		&user.IsVerified,
 	)
 
 	if err != nil {
@@ -93,4 +99,16 @@ func (r *UserRepo) GetUserByEmail(ctx context.Context, email string) (*models.Us
 	}
 
 	return &user, nil
+}
+
+func (r *UserRepo) VerifyUser(ctx context.Context, email string) error {
+
+	query := `
+	UPDATE users
+	SET email_verified = true
+	WHERE email = $1
+	`
+
+	_, err := r.DB.Exec(ctx, query, email)
+	return err
 }

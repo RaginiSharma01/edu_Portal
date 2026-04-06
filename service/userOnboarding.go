@@ -64,27 +64,66 @@ func (s *UserService) OnboardUsers(ctx context.Context, user models.TeacherOnboa
 	return userID, nil
 }
 
-func (s *UserService) VerifyOTP(ctx context.Context, email string, otp string) (string, error) {
+func (s *UserService) VerifyOTP(ctx context.Context, email string, otp string) error {
 
 	storedOTP, err := s.redis.Get(ctx, "otp:"+email).Result()
 	if err != nil {
-		return "", errors.New("otp expired or not found")
+		return errors.New("otp expired or not found")
 	}
 
 	if storedOTP != otp {
-		return "", errors.New("invalid otp")
+		return errors.New("invalid otp")
 	}
 
 	// delete OTP
 	s.redis.Del(ctx, "otp:"+email)
 
-	// get user from DB
-	user, err := s.userRepo.GetUserByEmail(ctx, email)
+	// verify user in database
+	err = s.userRepo.VerifyUser(ctx, email)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	// generate jwt
+	return nil
+}
+func (s *UserService) Login(ctx context.Context, email string, password string) (string, error) {
+
+	if email == "" || password == "" {
+		return "", errors.New("email and password required")
+	}
+
+	user, err := s.userRepo.GetUserByEmail(ctx, email)
+	if err != nil {
+		return "", errors.New("invalid credentials")
+	}
+
+	// check password
+	err = utils.CheckPasswordHash(password, user.Password)
+	if err != nil {
+		return "", errors.New("invalid credentials")
+	}
+
+	// if email not verified
+	if !user.IsVerified {
+
+		otp := utils.GenerateOTP()
+
+		// store OTP in redis
+		err = utils.StoreOTP(ctx, s.redis, email, otp)
+		if err != nil {
+			return "", err
+		}
+
+		// send email
+		err = utils.SendOTPEmail(email, otp)
+		if err != nil {
+			return "", err
+		}
+
+		return "", errors.New("email not verified. OTP sent to your email")
+	}
+
+	// generate JWT
 	token, err := utils.GenerateJWT(user.ID, user.Email)
 	if err != nil {
 		return "", err
