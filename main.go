@@ -18,9 +18,9 @@ func main() {
 
 	app := fiber.New()
 
-	userHandler := wire.InitializeUserHandler()
+	handlers := wire.InitializeHandlers()
 
-	routes.SetupUserRoutes(app, userHandler)
+	routes.SetupUserRoutes(app, handlers.UserHandler, handlers.ClassroomHandler)
 
 	log.Fatal(app.Listen(cfg.ServerPort))
 }

@@ -13,8 +13,7 @@ import (
 	"github.com/google/wire"
 )
 
-func InitializeUserHandler() *handler.UserHandler {
-
+func InitializeHandlers() *Handlers {
 	wire.Build(
 		config.LoadConfig,
 		db.ProvidePgDb,
@@ -24,7 +23,13 @@ func InitializeUserHandler() *handler.UserHandler {
 		repository.NewUserRepo,
 		service.NewUserService,
 		handler.NewUserHandler,
+
+		repository.NewClassroomRepo,
+		service.NewClassroomService,
+		handler.NewClassroomHandler,
+
+		wire.Struct(new(Handlers), "*"),
 	)
 
-	return &handler.UserHandler{}
+	return &Handlers{}
 }

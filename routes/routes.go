@@ -2,11 +2,15 @@ package routes
 
 import (
 	"smp/handler"
+	"smp/middleware"
 
 	"github.com/gofiber/fiber/v3"
 )
 
-func SetupUserRoutes(app *fiber.App, userHandler *handler.UserHandler, //classroomHandler *handler.ClassroomHandler
+func SetupUserRoutes(
+	app *fiber.App,
+	userHandler *handler.UserHandler,
+	classroomHandler *handler.ClassroomHandler,
 ) {
 
 	api := app.Group("/api")
@@ -19,12 +23,16 @@ func SetupUserRoutes(app *fiber.App, userHandler *handler.UserHandler, //classro
 
 	signup.Post("/teacher", userHandler.OnboardTeacher)
 	signup.Post("/student", userHandler.OnboardStudent)
+
 	onboarding.Post("/verify-otp", userHandler.VerifyOTP)
 	onboarding.Post("/login", userHandler.Login)
 
 	// classroom routes
-	//classroom := v1.Group("/classrooms")
+	classroom := v1.Group(
+		"/classrooms",
+		middleware.AdminOnly(),
+	)
 
-	//classroom.Post("/", classroomHandler.CreateClassroom)
-
+	classroom.Post("/create", classroomHandler.CreateClassroom)
+	classroom.Get("/get", classroomHandler.GetClassrooms)
 }

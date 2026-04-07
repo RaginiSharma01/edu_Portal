@@ -23,3 +23,7 @@ func (s *ClassroomService) CreateClassroom(ctx context.Context, req models.Creat
 
 	return id, nil
 }
+
+func (s *ClassroomService) GetClassrooms(ctx context.Context) ([]models.ClassroomCard, error) {
+	return s.repo.GetClassrooms(ctx)
+}

@@ -4,16 +4,16 @@ import "time"
 
 type CreateClassroom struct {
 	Name         string   `json:"name"`
-	TeacherID    string   `json:"teacher_id"`
-	AcademicYear string   `json:"academic_year"`
+	TeacherID    string   `json:"teacherId"`
+	AcademicYear string   `json:"academicYear"`
 	Subjects     []string `json:"subjects"`
 }
 type Classroom struct {
 	ID           string    `json:"id"`
 	Name         string    `json:"name"`
-	TeacherID    string    `json:"teacher_id"`
-	AcademicYear string    `json:"academic_year"`
-	CreatedAt    time.Time `json:"created_at"`
+	TeacherID    string    `json:"teacherId"`
+	AcademicYear string    `json:"academicYear"`
+	CreatedAt    time.Time `json:"createdAt"`
 }
 type Subject struct {
 	ID   string `json:"id"`
@@ -21,6 +21,13 @@ type Subject struct {
 }
 type ClassroomSubject struct {
 	ID          string `json:"id"`
-	ClassroomID string `json:"classroom_id"`
-	SubjectID   string `json:"subject_id"`
+	ClassroomID string `json:"classroomId"`
+	SubjectID   string `json:"subjectId"`
+}
+type ClassroomCard struct {
+	ID            string `json:"id"`
+	Name          string `json:"name"`
+	TeacherName   string `json:"teacherName"`
+	StudentsCount int    `json:"studentsCount"`
+	SubjectsCount int    `json:"subjectsCount"`
 }

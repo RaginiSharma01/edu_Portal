@@ -16,7 +16,7 @@ import (
 
 // Injectors from wire.go:
 
-func InitializeUserHandler() *handler.UserHandler {
+func InitializeHandlers() *Handlers {
 	configConfig := config.LoadConfig()
 	pgDb := db.ProvidePgDb(configConfig)
 	pool := db.ProvidePool(pgDb)
@@ -24,5 +24,12 @@ func InitializeUserHandler() *handler.UserHandler {
 	client := db.ProvideRedis(configConfig)
 	userService := service.NewUserService(userRepo, client)
 	userHandler := handler.NewUserHandler(userService)
-	return userHandler
+	classroomRepo := repository.NewClassroomRepo(pool)
+	classroomService := service.NewClassroomService(classroomRepo)
+	classroomHandler := handler.NewClassroomHandler(classroomService)
+	handlers := &Handlers{
+		UserHandler:      userHandler,
+		ClassroomHandler: classroomHandler,
+	}
+	return handlers
 }
