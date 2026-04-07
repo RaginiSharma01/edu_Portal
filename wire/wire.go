@@ -28,6 +28,10 @@ func InitializeHandlers() *Handlers {
 		service.NewClassroomService,
 		handler.NewClassroomHandler,
 
+		repository.NewEventRepository,
+		service.NewEventService,
+		handler.NewEventHandler,
+
 		wire.Struct(new(Handlers), "*"),
 	)
 

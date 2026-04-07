@@ -19,6 +19,8 @@ func NewClassroomRepo(db *pgxpool.Pool) *ClassroomRepo {
 func (r *ClassroomRepo) CreateClassroom(ctx context.Context, req models.CreateClassroom) (string, error) {
 
 	fmt.Println(req)
+
+	
 	query := `
 	INSERT INTO classrooms (name, teacher_id, academic_year)
 	VALUES ($1, $2, $3)
@@ -37,8 +39,37 @@ func (r *ClassroomRepo) CreateClassroom(ctx context.Context, req models.CreateCl
 		return "", err
 	}
 
+	
+	for _, subjectName := range req.Subjects {
+
+		var subjectID string
+
+		// Get subject id
+		err := r.db.QueryRow(ctx,
+			`SELECT id FROM subjects WHERE LOWER(name)=LOWER($1)`,
+			subjectName,
+		).Scan(&subjectID)
+
+		if err != nil {
+			return "", err
+		}
+
+		// Insert into classroom_subjects
+		_, err = r.db.Exec(ctx,
+			`INSERT INTO classroom_subjects (classroom_id, subject_id)
+			 VALUES ($1, $2)`,
+			classroomID,
+			subjectID,
+		)
+
+		if err != nil {
+			return "", err
+		}
+	}
+
 	return classroomID, nil
 }
+
 func (r *ClassroomRepo) GetClassrooms(ctx context.Context) ([]models.ClassroomCard, error) {
 
 	query := `

@@ -27,9 +27,13 @@ func InitializeHandlers() *Handlers {
 	classroomRepo := repository.NewClassroomRepo(pool)
 	classroomService := service.NewClassroomService(classroomRepo)
 	classroomHandler := handler.NewClassroomHandler(classroomService)
+	eventRepo := repository.NewEventRepository(pool)
+	eventService := service.NewEventService(eventRepo)
+	eventHandler := handler.NewEventHandler(eventService)
 	handlers := &Handlers{
 		UserHandler:      userHandler,
 		ClassroomHandler: classroomHandler,
+		EventHandler:     eventHandler,
 	}
 	return handlers
 }

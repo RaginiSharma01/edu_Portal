@@ -11,6 +11,8 @@ func SetupUserRoutes(
 	app *fiber.App,
 	userHandler *handler.UserHandler,
 	classroomHandler *handler.ClassroomHandler,
+	eventHandler *handler.EventHandler,
+	
 ) {
 
 	api := app.Group("/api")
@@ -28,11 +30,14 @@ func SetupUserRoutes(
 	onboarding.Post("/login", userHandler.Login)
 
 	// classroom routes
-	classroom := v1.Group(
-		"/classrooms",
-		middleware.AdminOnly(),
-	)
+	classroom := v1.Group("/classrooms", middleware.AdminOnly())
 
 	classroom.Post("/create", classroomHandler.CreateClassroom)
 	classroom.Get("/get", classroomHandler.GetClassrooms)
+
+	// event routes
+	event := v1.Group("/events", middleware.AdminOnly())
+
+	event.Post("/create", eventHandler.CreateEvent)
+	event.Get("/get", eventHandler.GetEvents)
 }
