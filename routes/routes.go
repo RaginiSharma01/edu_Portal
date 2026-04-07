@@ -6,7 +6,8 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
-func SetupUserRoutes(app *fiber.App, userHandler *handler.UserHandler, classroomHandler *handler.ClassroomHandler) {
+func SetupUserRoutes(app *fiber.App, userHandler *handler.UserHandler, //classroomHandler *handler.ClassroomHandler
+) {
 
 	api := app.Group("/api")
 	smp := api.Group("/smp")
@@ -22,8 +23,8 @@ func SetupUserRoutes(app *fiber.App, userHandler *handler.UserHandler, classroom
 	onboarding.Post("/login", userHandler.Login)
 
 	// classroom routes
-	classroom := v1.Group("/classrooms")
+	//classroom := v1.Group("/classrooms")
 
-	classroom.Post("/", classroomHandler.CreateClassroom)
+	//classroom.Post("/", classroomHandler.CreateClassroom)
 
 }
