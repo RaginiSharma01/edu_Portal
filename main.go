@@ -20,7 +20,12 @@ func main() {
 
 	handlers := wire.InitializeHandlers()
 
-	routes.SetupUserRoutes(app, handlers.UserHandler, handlers.ClassroomHandler, handlers.EventHandler, handlers.SalaryHandler)
+	routes.SetupUserRoutes(app,
+		handlers.UserHandler,
+		handlers.ClassroomHandler,
+		handlers.EventHandler,
+		handlers.SalaryHandler,
+		handlers.TimetableHandler)
 
 	log.Fatal(app.Listen(cfg.ServerPort))
 }

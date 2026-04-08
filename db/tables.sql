@@ -57,3 +57,24 @@ VALUES
  'admin',
  true
 );
+
+SELECT id FROM subjects WHERE LOWER(name)=LOWER('english');
+CREATE TABLE events (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(200) NOT NULL,
+    event_date DATE NOT NULL,
+    venue VARCHAR(200),
+    description TEXT,
+    type VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE teacher_salaries (
+    id UUID PRIMARY KEY,
+    teacher_id UUID REFERENCES teachers(user_id) ON DELETE CASCADE,
+    base_salary INT NOT NULL,
+    allowance INT NOT NULL,
+    effective_from DATE NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

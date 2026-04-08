@@ -33,11 +33,15 @@ func InitializeHandlers() *Handlers {
 	salaryRepository := repository.NewSalaryRepository(pool)
 	salaryService := service.NewSalaryService(salaryRepository)
 	salaryHandler := handler.NewSalaryHandler(salaryService)
+	timetableRepository := repository.NewTimetableRepository(pool)
+	timetableService := service.NewTimetableService(timetableRepository)
+	timetableHandler := handler.NewTimetableHandler(timetableService)
 	handlers := &Handlers{
 		UserHandler:      userHandler,
 		ClassroomHandler: classroomHandler,
 		EventHandler:     eventHandler,
 		SalaryHandler:    salaryHandler,
+		TimetableHandler: timetableHandler,
 	}
 	return handlers
 }
