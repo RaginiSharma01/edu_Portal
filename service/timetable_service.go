@@ -21,3 +21,10 @@ func (s *TimetableService) CreateTimetable(
 
 	return s.Repo.CreateTimeTable(ctx, t)
 }
+func (s *TimetableService) GetTimetable(
+	ctx context.Context,
+	classID string,
+) ([]models.TimetableRow, error) {
+
+	return s.Repo.GetTimetable(ctx, classID)
+}

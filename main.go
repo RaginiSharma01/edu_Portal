@@ -25,7 +25,8 @@ func main() {
 		handlers.ClassroomHandler,
 		handlers.EventHandler,
 		handlers.SalaryHandler,
-		handlers.TimetableHandler)
+		handlers.TimetableHandler,
+		handlers.MarksHandler)
 
 	log.Fatal(app.Listen(cfg.ServerPort))
 }

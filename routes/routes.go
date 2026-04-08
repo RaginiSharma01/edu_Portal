@@ -14,6 +14,7 @@ func SetupUserRoutes(
 	eventHandler *handler.EventHandler,
 	salaryHandler *handler.SalaryHandler,
 	timetableHandler *handler.TimetableHandler,
+	marksheetHandler *handler.MarksHandler,
 
 ) {
 
@@ -49,9 +50,17 @@ func SetupUserRoutes(
 	salary.Post("/create", salaryHandler.CreateSalary)
 	salary.Get("/get", salaryHandler.GetAllSalaries)
 
-	//time table 
+	//time table
 
-	timetable:=v1.Group("/timetable", middleware.AdminOnly() )
+	timetable := v1.Group("/timetable", middleware.AdminOnly())
 
-	timetable.Post("/create" ,timetableHandler.CreateTimetable )
+	timetable.Post("/create", timetableHandler.CreateTimetable)
+	timetable.Get("/get", timetableHandler.GetTimetable)
+
+
+	// marksheet
+
+	marksheet := v1.Group("/marksheet")
+	marksheet.Post("/create" , marksheetHandler.CreateMarks)
+	marksheet.Get("/get" , marksheetHandler.GetMarks)
 }
