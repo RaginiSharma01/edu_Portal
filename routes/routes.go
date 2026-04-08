@@ -12,7 +12,8 @@ func SetupUserRoutes(
 	userHandler *handler.UserHandler,
 	classroomHandler *handler.ClassroomHandler,
 	eventHandler *handler.EventHandler,
-	
+	salaryHandler *handler.SalaryHandler,
+
 ) {
 
 	api := app.Group("/api")
@@ -40,4 +41,10 @@ func SetupUserRoutes(
 
 	event.Post("/create", eventHandler.CreateEvent)
 	event.Get("/get", eventHandler.GetEvents)
+
+	// salary routes
+	salary := v1.Group("/salaries", middleware.AdminOnly())
+
+	salary.Post("/create", salaryHandler.CreateSalary)
+	salary.Get("/get", salaryHandler.GetAllSalaries)
 }

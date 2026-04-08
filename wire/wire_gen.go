@@ -30,10 +30,14 @@ func InitializeHandlers() *Handlers {
 	eventRepo := repository.NewEventRepository(pool)
 	eventService := service.NewEventService(eventRepo)
 	eventHandler := handler.NewEventHandler(eventService)
+	salaryRepository := repository.NewSalaryRepository(pool)
+	salaryService := service.NewSalaryService(salaryRepository)
+	salaryHandler := handler.NewSalaryHandler(salaryService)
 	handlers := &Handlers{
 		UserHandler:      userHandler,
 		ClassroomHandler: classroomHandler,
 		EventHandler:     eventHandler,
+		SalaryHandler:    salaryHandler,
 	}
 	return handlers
 }

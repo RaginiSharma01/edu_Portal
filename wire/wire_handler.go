@@ -6,4 +6,5 @@ type Handlers struct {
 	UserHandler      *handler.UserHandler
 	ClassroomHandler *handler.ClassroomHandler
 	EventHandler     *handler.EventHandler
+	SalaryHandler    *handler.SalaryHandler
 }

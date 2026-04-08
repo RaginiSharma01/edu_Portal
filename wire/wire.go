@@ -32,6 +32,10 @@ func InitializeHandlers() *Handlers {
 		service.NewEventService,
 		handler.NewEventHandler,
 
+		repository.NewSalaryRepository,
+		service.NewSalaryService,
+		handler.NewSalaryHandler,
+
 		wire.Struct(new(Handlers), "*"),
 	)
 

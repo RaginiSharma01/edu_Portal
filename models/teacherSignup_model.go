@@ -20,3 +20,17 @@ type User struct {
 	IsVerified bool   `json:"isVerified"`
 	Role       string `json:"role"`
 }
+type CreateSalary struct {
+	TeacherID     string `json:"teacherId"`
+	BaseSalary    int    `json:"baseSalary"`
+	Allowance     int    `json:"allowance"`
+	EffectiveFrom string `json:"effectiveFrom"`
+}
+
+type SalaryResponse struct {
+	TeacherName string `json:"teacherName"`
+	BaseSalary  int    `json:"baseSalary"`
+	Allowance   int    `json:"allowance"`
+	Total       int    `json:"total"`
+	Status      string `json:"status"`
+}
