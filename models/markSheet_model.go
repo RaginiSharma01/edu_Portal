@@ -12,13 +12,13 @@ type CreateMarks struct {
 }
 
 type StudentMarks struct {
-	Student     string  `json:"student"`
-	Mathematics *int    `json:"mathematics"`
-	Physics     *int    `json:"physics"`
-	Chemistry   *int    `json:"chemistry"`
-	English     *int    `json:"english"`
-	Hindi       *int    `json:"hindi"`
-	Social      *int    `json:"social"`
-	Total       int     `json:"total"`
-	Percentage  float64 `json:"percentage"`
+	Student    string
+	Math       *int
+	Science    *int
+	Hindi      *int
+	English    *int
+	Computer   *int
+	Social     *int
+	Total      int
+	Percentage float64
 }

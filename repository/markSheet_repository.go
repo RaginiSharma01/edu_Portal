@@ -52,27 +52,29 @@ func (r *MarksRepository) GetMarks(
 ) ([]models.StudentMarks, error) {
 
 	query := `
-	SELECT 
-	    st.name AS student,
+SELECT 
+    u.first_name || ' ' || u.last_name AS student,
 
-	    MAX(CASE WHEN sub.name='Mathematics' THEN m.marks END) AS mathematics,
-	    MAX(CASE WHEN sub.name='Physics' THEN m.marks END) AS physics,
-	    MAX(CASE WHEN sub.name='Chemistry' THEN m.marks END) AS chemistry,
-	    MAX(CASE WHEN sub.name='English' THEN m.marks END) AS english,
-	    MAX(CASE WHEN sub.name='Hindi' THEN m.marks END) AS hindi,
-	    MAX(CASE WHEN sub.name='Social Science' THEN m.marks END) AS social,
+    MAX(CASE WHEN sub.name='Math' THEN m.marks END) AS math,
+    MAX(CASE WHEN sub.name='Science' THEN m.marks END) AS science,
+    MAX(CASE WHEN sub.name='Hindi' THEN m.marks END) AS hindi,
+    MAX(CASE WHEN sub.name='English' THEN m.marks END) AS english,
+    MAX(CASE WHEN sub.name='Computer' THEN m.marks END) AS computer,
+    MAX(CASE WHEN sub.name='Social' THEN m.marks END) AS social,
 
-	    SUM(m.marks) AS total,
-	    ROUND((SUM(m.marks) * 100.0) / 300,2) AS percentage
+    COALESCE(SUM(m.marks),0) AS total,
 
-	FROM students st
-	LEFT JOIN marks m ON st.id = m.student_id
-	LEFT JOIN subjects sub ON sub.id = m.subject_id
+    COALESCE(ROUND((SUM(m.marks) * 100.0) / 300, 2),0) AS percentage
 
-	WHERE m.term = $1
+FROM students st
+JOIN users u ON st.user_id = u.id
+LEFT JOIN marks m 
+ON st.id = m.student_id AND m.term = $1
+LEFT JOIN subjects sub 
+ON sub.id = m.subject_id
 
-	GROUP BY st.name
-	ORDER BY st.name
+GROUP BY u.first_name, u.last_name
+ORDER BY u.first_name;
 	`
 
 	rows, err := r.DB.Query(ctx, query, term)
@@ -90,11 +92,11 @@ func (r *MarksRepository) GetMarks(
 
 		err := rows.Scan(
 			&s.Student,
-			&s.Mathematics,
-			&s.Physics,
-			&s.Chemistry,
-			&s.English,
+			&s.Math,
+			&s.Science,
 			&s.Hindi,
+			&s.English,
+			&s.Computer,
 			&s.Social,
 			&s.Total,
 			&s.Percentage,
