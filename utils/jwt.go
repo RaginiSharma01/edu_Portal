@@ -17,7 +17,7 @@ func GenerateJWT(empID string, email string, role string) (string, error) {
 		"empId": empID,
 		"email": email,
 		"role":  role,
-		"exp":   jwt.TimeFunc().Add(20 * time.Minute).Unix(),
+		"exp":   jwt.TimeFunc().Add(1 * time.Hour).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -64,5 +64,3 @@ func GenerateVerificationToken() (string, error) {
 
 	return hex.EncodeToString(b), nil
 }
-
-

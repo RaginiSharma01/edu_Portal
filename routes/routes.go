@@ -52,15 +52,14 @@ func SetupUserRoutes(
 
 	//time table
 
-	timetable := v1.Group("/timetable", middleware.AdminOnly())
+	timetable := v1.Group("/timetable", middleware.AdminOnly(), middleware.TeacherOnly())
 
 	timetable.Post("/create", timetableHandler.CreateTimetable)
 	timetable.Get("/get", timetableHandler.GetTimetable)
 
-
 	// marksheet
 
 	marksheet := v1.Group("/marksheet")
-	marksheet.Post("/create" , marksheetHandler.CreateMarks)
-	marksheet.Get("/get" , marksheetHandler.GetMarks)
+	marksheet.Post("/create", marksheetHandler.CreateMarks)
+	marksheet.Get("/get", marksheetHandler.GetMarks)
 }
