@@ -36,14 +36,21 @@ func (h *TimetableHandler) CreateTimetable(c fiber.Ctx) error {
 		"message": "timetable created",
 	})
 }
+
 func (h *TimetableHandler) GetTimetable(c fiber.Ctx) error {
 
-	classID := c.Params("classId")
+	classID := c.Query("classId")
 
+	// fmt.Println(classID)
+
+	//	classID ="9d130266-8599-46ca-aad9-2713b6ba9e5e"
 	timetable, err := h.timetableService.GetTimetable(c.Context(), classID)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
-			"error": "failed to fetch timetable",
+			//"error": err.Error(),
+
+			//err msg
+			"message": "Failed to fetch the timetable",
 		})
 	}
 
