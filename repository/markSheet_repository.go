@@ -63,7 +63,7 @@ SELECT
     COALESCE(MAX(CASE WHEN LOWER(sub.name) = 'social' THEN m.marks END),0) AS social,
 
     COALESCE(SUM(m.marks),0) AS total,
-    COALESCE(ROUND((SUM(m.marks) * 100.0) / 300, 2),0) AS percentage
+    COALESCE(ROUND((SUM(m.marks) * 100.0) / 600, 2),0) AS percentage
 
 FROM users u
 

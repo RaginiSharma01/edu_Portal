@@ -4,6 +4,7 @@ import (
 	"context"
 	"smp/models"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -177,4 +178,61 @@ func (r *UserRepo) OnboardStudent(ctx context.Context, student models.StudentOnb
 	}
 
 	return userID, nil
+}
+
+// func to get student and get teachers
+func (r *UserRepo) GetAllTeachers(ctx context.Context) (pgx.Rows, error) {
+
+	query := `
+	SELECT 
+		u.id,
+		u.first_name,
+		u.last_name,
+		u.email,
+		u.phone,
+		u.age,
+		u.date_of_birth,
+		u.address,
+		t.qualification,
+		t.subjects_teaching
+	FROM teachers t
+	JOIN users u ON u.id = t.user_id
+	`
+
+	rows, err := r.DB.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return rows, nil
+}
+
+func (r *UserRepo) GetAllStudents(ctx context.Context) (pgx.Rows, error) {
+
+	query := `
+	SELECT 
+		u.id,
+		u.first_name,
+		u.last_name,
+		u.email,
+		u.phone,
+		u.age,
+		u.date_of_birth,
+		u.address,
+		s.father_name,
+		s.mother_name,
+		s.guardian_name,
+		s.occupation,
+		s.height,
+		s.weight
+	FROM students s
+	JOIN users u ON u.id = s.user_id
+	`
+
+	rows, err := r.DB.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return rows, nil
 }

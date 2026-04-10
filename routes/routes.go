@@ -62,4 +62,8 @@ func SetupUserRoutes(
 	marksheet := v1.Group("/marksheet")
 	marksheet.Post("/create", marksheetHandler.CreateMarks)
 	marksheet.Get("/get", marksheetHandler.GetMarks)
+
+	getUsers := v1.Group("/fetch")
+	getUsers.Get("/teachers", userHandler.GetAllTeachers)
+	getUsers.Get("/students", userHandler.GetAllStudents)
 }

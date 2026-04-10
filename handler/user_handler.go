@@ -105,3 +105,26 @@ func (h *UserHandler) OnboardStudent(c fiber.Ctx) error {
 		"user_id": userID,
 	})
 }
+func (h *UserHandler) GetAllTeachers(c fiber.Ctx) error {
+
+	teachers, err := h.Service.GetAllTeachers(c.Context())
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(teachers)
+}
+
+func (h *UserHandler) GetAllStudents(c fiber.Ctx) error {
+
+	students, err := h.Service.GetAllStudents(c.Context())
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(students)
+}

@@ -141,6 +141,8 @@ func (s *UserService) Login(ctx context.Context, email string, password string) 
 
 	return token, nil
 }
+
+// student creation
 func (s *UserService) OnboardStudent(ctx context.Context, student models.StudentOnboarding) (string, error) {
 
 	if student.Email == "" {
@@ -176,4 +178,122 @@ func (s *UserService) OnboardStudent(ctx context.Context, student models.Student
 	}
 
 	return userID, nil
+}
+
+//get function for students
+
+func (s *UserService) GetAllTeachers(ctx context.Context) (interface{}, error) {
+
+	rows, err := s.userRepo.GetAllTeachers(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var teachers []map[string]interface{}
+
+	for rows.Next() {
+		var (
+			id, firstName, lastName, email, phone, dob, address string
+			qualification, subjects                             string
+			age                                                 int
+		)
+
+		err := rows.Scan(
+			&id,
+			&firstName,
+			&lastName,
+			&email,
+			&phone,
+			&age,
+			&dob,
+			&address,
+			&qualification,
+			&subjects,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		teacher := map[string]interface{}{
+			"id":               id,
+			"firstName":        firstName,
+			"lastName":         lastName,
+			"email":            email,
+			"phone":            phone,
+			"age":              age,
+			"dob":              dob,
+			"address":          address,
+			"qualification":    qualification,
+			"subjectsTeaching": subjects,
+		}
+
+		teachers = append(teachers, teacher)
+	}
+
+	return teachers, nil
+}
+
+//get function for teachers
+
+func (s *UserService) GetAllStudents(ctx context.Context) (interface{}, error) {
+
+	rows, err := s.userRepo.GetAllStudents(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var students []map[string]interface{}
+
+	for rows.Next() {
+		var (
+			id, firstName, lastName, email, phone, dob, address string
+			father, mother, guardian, occupation                string
+			age, height, weight                                 int
+		)
+
+		err := rows.Scan(
+			&id,
+			&firstName,
+			&lastName,
+			&email,
+			&phone,
+			&age,
+			&dob,
+			&address,
+			&father,
+			&mother,
+			&guardian,
+			&occupation,
+			&height,
+			&weight,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		student := map[string]interface{}{
+			"id":           id,
+			"firstName":    firstName,
+			"lastName":     lastName,
+			"email":        email,
+			"phone":        phone,
+			"age":          age,
+			"dob":          dob,
+			"address":      address,
+			"fatherName":   father,
+			"motherName":   mother,
+			"guardianName": guardian,
+			"occupation":   occupation,
+			"height":       height,
+			"weight":       weight,
+		}
+
+		students = append(students, student)
+	}
+
+	return students, nil
 }
