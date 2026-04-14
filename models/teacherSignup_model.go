@@ -12,13 +12,23 @@ type TeacherOnboarding struct {
 	SubjectsTeaching string `json:"subjectsTeaching"`
 	Password         string `json:"password"`
 }
-
+type UpdateTeacher struct {
+	FirstName        string `json:"firstName"`
+	LastName         string `json:"lastName"`
+	Phone            string `json:"phone"`
+	Age              int    `json:"age"`
+	DateOfBirth      string `json:"dob"`
+	Address          string `json:"address"`
+	Qualification    string `json:"qualification"`
+	SubjectsTeaching string `json:"subjectsTeaching"`
+}
 type User struct {
 	ID         string `json:"id"`
 	Email      string `json:"email"`
 	Password   string `json:"-"`
 	IsVerified bool   `json:"isVerified"`
 	Role       string `json:"role"`
+	IsBlocked  bool   `json:"isBlocked"`
 }
 type CreateSalary struct {
 	TeacherID     string `json:"teacherId"`
@@ -33,4 +43,9 @@ type SalaryResponse struct {
 	Allowance   int    `json:"allowance"`
 	Total       int    `json:"total"`
 	Status      string `json:"status"`
+}
+type UpdateSalary struct {
+	BaseSalary    int    `json:"baseSalary"`
+	Allowance     int    `json:"allowance"`
+	EffectiveFrom string `json:"effectiveFrom"`
 }

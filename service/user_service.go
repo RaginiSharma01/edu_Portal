@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"smp/models"
 	"smp/repository"
 	"smp/utils"
@@ -32,7 +33,6 @@ func (s *UserService) OnboardUsers(ctx context.Context, user models.TeacherOnboa
 		return "", errors.New("password must be at least 8 characters")
 	}
 
-	// hash password
 	hashedPassword, err := utils.HashPassword(user.Password)
 	if err != nil {
 		return "", err
@@ -40,22 +40,18 @@ func (s *UserService) OnboardUsers(ctx context.Context, user models.TeacherOnboa
 
 	user.Password = hashedPassword
 
-	// save user in DB
 	userID, err := s.userRepo.OnboardingUser(ctx, user)
 	if err != nil {
 		return "", err
 	}
 
-	// generate OTP
 	otp := utils.GenerateOTP()
 
-	// store OTP in redis
 	err = utils.StoreOTP(ctx, s.redis, user.Email, otp)
 	if err != nil {
 		return "", err
 	}
 
-	// send email
 	err = utils.SendOTPEmail(user.Email, otp)
 	if err != nil {
 		return "", err
@@ -64,10 +60,16 @@ func (s *UserService) OnboardUsers(ctx context.Context, user models.TeacherOnboa
 	return userID, nil
 }
 
+// THIS WAS THE BUG — function name was missing
 func (s *UserService) VerifyOTP(ctx context.Context, email string, otp string) error {
 
+	// must match exactly how StoreOTP saves it
+	fmt.Println("Redis key:", "otp:"+email)
 	storedOTP, err := s.redis.Get(ctx, "otp:"+email).Result()
+	fmt.Println("storedOTP", storedOTP)
+	fmt.Println("err", err)
 	if err != nil {
+		fmt.Println("err redis: ", err)
 		return errors.New("otp expired or not found")
 	}
 
@@ -75,10 +77,8 @@ func (s *UserService) VerifyOTP(ctx context.Context, email string, otp string) e
 		return errors.New("invalid otp")
 	}
 
-	// delete OTP
 	s.redis.Del(ctx, "otp:"+email)
 
-	// verify user in database
 	err = s.userRepo.VerifyUser(ctx, email)
 	if err != nil {
 		return err
@@ -86,25 +86,11 @@ func (s *UserService) VerifyOTP(ctx context.Context, email string, otp string) e
 
 	return nil
 }
+
 func (s *UserService) Login(ctx context.Context, email string, password string) (string, error) {
 
 	if email == "" || password == "" {
 		return "", errors.New("email and password required")
-	}
-
-	if email == "admin@edu.com" && password == "admin123" {
-
-		token, err := utils.GenerateJWT(
-			"admin-id",
-			"admin@edu.com",
-			"admin",
-		)
-
-		if err != nil {
-			return "", err
-		}
-
-		return token, nil
 	}
 
 	user, err := s.userRepo.GetUserByEmail(ctx, email)
@@ -117,14 +103,27 @@ func (s *UserService) Login(ctx context.Context, email string, password string) 
 		return "", errors.New("invalid credentials")
 	}
 
-	if !user.IsVerified {
+	if user.IsBlocked {
+		return "", errors.New("your account has been blocked. contact admin")
+	}
+
+	if !user.IsVerified && user.Role != "admin" {
 
 		otp := utils.GenerateOTP()
 
 		err = utils.StoreOTP(ctx, s.redis, email, otp)
 		if err != nil {
+			fmt.Println("err", err)
 			return "", err
 		}
+
+		storedOTP, err := s.redis.Get(ctx, "otp:"+email).Result()
+		if err != nil {
+			fmt.Println("Redis err", err)
+			return "", err
+		}
+
+		fmt.Println("Redis storedOTP", storedOTP)
 
 		err = utils.SendOTPEmail(email, otp)
 		if err != nil {
@@ -142,7 +141,6 @@ func (s *UserService) Login(ctx context.Context, email string, password string) 
 	return token, nil
 }
 
-// student creation
 func (s *UserService) OnboardStudent(ctx context.Context, student models.StudentOnboarding) (string, error) {
 
 	if student.Email == "" {
@@ -179,8 +177,6 @@ func (s *UserService) OnboardStudent(ctx context.Context, student models.Student
 
 	return userID, nil
 }
-
-//get function for students
 
 func (s *UserService) GetAllTeachers(ctx context.Context) (interface{}, error) {
 
@@ -234,8 +230,6 @@ func (s *UserService) GetAllTeachers(ctx context.Context) (interface{}, error) {
 
 	return teachers, nil
 }
-
-//get function for teachers
 
 func (s *UserService) GetAllStudents(ctx context.Context) (interface{}, error) {
 
@@ -297,3 +291,77 @@ func (s *UserService) GetAllStudents(ctx context.Context) (interface{}, error) {
 
 	return students, nil
 }
+
+func (s *UserService) DeleteStudent(ctx context.Context, studentID string) error {
+
+	if studentID == "" {
+		return errors.New("student ID required")
+	}
+
+	return s.userRepo.DeleteStudent(ctx, studentID)
+}
+
+func (s *UserService) UpdateStudent(ctx context.Context, studentID string, data models.UpdateStudent) error {
+
+	if studentID == "" {
+		return errors.New("student ID required")
+	}
+
+	if data.FirstName == "" || data.LastName == "" {
+		return errors.New("first name and last name are required")
+	}
+
+	return s.userRepo.UpdateStudent(ctx, studentID, data)
+}
+
+func (s *UserService) BlockStudent(ctx context.Context, studentID string, block bool) error {
+
+	if studentID == "" {
+		return errors.New("student ID required")
+	}
+
+	return s.userRepo.BlockStudent(ctx, studentID, block)
+}
+
+func (s *UserService) DeleteTeacher(ctx context.Context, teacherID string) error {
+
+	if teacherID == "" {
+		return errors.New("teacher ID required")
+	}
+
+	return s.userRepo.DeleteTeacher(ctx, teacherID)
+}
+
+func (s *UserService) UpdateTeacher(ctx context.Context, teacherID string, data models.UpdateTeacher) error {
+
+	if teacherID == "" {
+		return errors.New("teacher ID required")
+	}
+
+	if data.FirstName == "" || data.LastName == "" {
+		return errors.New("first name and last name are required")
+	}
+
+	return s.userRepo.UpdateTeacher(ctx, teacherID, data)
+}
+
+// func (s *UserService) VerifyOTP(ctx context.Context, email string, otp string) error {
+
+// 	storedOTP, err := s.redis.Get(ctx, "otp:"+email).Result()
+// 	if err != nil {
+// 		return errors.New("otp expired or not found")
+// 	}
+
+// 	if storedOTP != otp {
+// 		return errors.New("invalid otp")
+// 	}
+
+// 	s.redis.Del(ctx, "otp:"+email)
+
+// 	err = s.userRepo.VerifyUser(ctx, email)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	return nil
+// }

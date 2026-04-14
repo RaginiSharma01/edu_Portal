@@ -30,3 +30,8 @@ func main() {
 
 	log.Fatal(app.Listen(cfg.ServerPort))
 }
+
+// func main() {
+// 	hash, _ := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
+// 	fmt.Println(string(hash))
+// }

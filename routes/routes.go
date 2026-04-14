@@ -15,7 +15,6 @@ func SetupUserRoutes(
 	salaryHandler *handler.SalaryHandler,
 	timetableHandler *handler.TimetableHandler,
 	marksheetHandler *handler.MarksHandler,
-
 ) {
 
 	api := app.Group("/api")
@@ -33,37 +32,52 @@ func SetupUserRoutes(
 	onboarding.Post("/login", userHandler.Login)
 
 	// classroom routes
+	// admin only — create, manage, delete classrooms
 	classroom := v1.Group("/classrooms", middleware.AdminOnly())
-
 	classroom.Post("/create", classroomHandler.CreateClassroom)
 	classroom.Get("/get", classroomHandler.GetClassrooms)
+	classroom.Delete("/:id", classroomHandler.DeleteClassroom)
+	classroom.Post("/:id/students", classroomHandler.AddStudentsToClassroom)
+	classroom.Delete("/:id/students/:studentId", classroomHandler.RemoveStudentFromClassroom)
 
+	// admin + teacher — view classroom detail
+	classroomView := v1.Group("/classrooms")
+	classroomView.Get("/:id", middleware.AdminOnly(), classroomHandler.GetClassroomByID)
+	classroomView.Get("/:id", middleware.TeacherOnly(), classroomHandler.GetClassroomByID) // duplicate route — see note below
 	// event routes
 	event := v1.Group("/events", middleware.AdminOnly())
-
 	event.Post("/create", eventHandler.CreateEvent)
 	event.Get("/get", eventHandler.GetEvents)
 
 	// salary routes
 	salary := v1.Group("/salaries", middleware.AdminOnly())
-
 	salary.Post("/create", salaryHandler.CreateSalary)
 	salary.Get("/get", salaryHandler.GetAllSalaries)
+	salary.Put("/:teacherId", salaryHandler.UpdateSalary)
 
-	//time table
-
+	// timetable routes
 	timetable := v1.Group("/timetable", middleware.AdminOnly(), middleware.TeacherOnly())
-
 	timetable.Post("/create", timetableHandler.CreateTimetable)
 	timetable.Get("/get", timetableHandler.GetTimetable)
 
-	// marksheet
-
+	// marksheet routes
 	marksheet := v1.Group("/marksheet")
 	marksheet.Post("/create", marksheetHandler.CreateMarks)
 	marksheet.Get("/get", marksheetHandler.GetMarks)
 
+	// fetch routes
 	getUsers := v1.Group("/fetch")
 	getUsers.Get("/teachers", userHandler.GetAllTeachers)
 	getUsers.Get("/students", userHandler.GetAllStudents)
+
+	// student management — admin only
+	students := v1.Group("/students", middleware.AdminOnly())
+	students.Delete("/:id", userHandler.DeleteStudent)
+	students.Put("/:id", userHandler.UpdateStudent)
+	students.Patch("/:id/block", userHandler.BlockStudent)
+
+	// teacher management — admin only
+	teachers := v1.Group("/teachers", middleware.AdminOnly())
+	teachers.Delete("/:id", userHandler.DeleteTeacher)
+	teachers.Put("/:id", userHandler.UpdateTeacher)
 }

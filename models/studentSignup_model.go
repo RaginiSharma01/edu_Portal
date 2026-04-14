@@ -19,3 +19,17 @@ type StudentOnboarding struct {
 
 	Password string `json:"password"`
 }
+type UpdateStudent struct {
+	FirstName    string `json:"firstName"`
+	LastName     string `json:"lastName"`
+	Phone        string `json:"phone"`
+	Age          int    `json:"age"`
+	DateOfBirth  string `json:"dob"`
+	Address      string `json:"address"`
+	FatherName   string `json:"fatherName"`
+	MotherName   string `json:"motherName"`
+	GuardianName string `json:"guardianName"`
+	Occupation   string `json:"occupation"`
+	Height       int    `json:"height"`
+	Weight       int    `json:"weight"`
+}

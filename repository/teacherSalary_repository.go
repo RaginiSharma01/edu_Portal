@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"smp/models"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -86,4 +87,31 @@ func (r *SalaryRepository) GetAllSalaries(ctx context.Context) ([]models.SalaryR
 	}
 
 	return salaries, nil
+}
+
+func (r *SalaryRepository) UpdateSalary(ctx context.Context, teacherID string, data models.UpdateSalary) error {
+
+	query := `
+    UPDATE teacher_salaries SET
+        base_salary    = $1,
+        allowance      = $2,
+        effective_from = $3
+    WHERE teacher_id = $4
+    `
+
+	result, err := r.DB.Exec(ctx, query,
+		data.BaseSalary,
+		data.Allowance,
+		data.EffectiveFrom,
+		teacherID,
+	)
+	if err != nil {
+		return err
+	}
+
+	if result.RowsAffected() == 0 {
+		return errors.New("salary record not found for this teacher")
+	}
+
+	return nil
 }

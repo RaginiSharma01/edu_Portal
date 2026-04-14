@@ -54,3 +54,30 @@ func (h *SalaryHandler) GetAllSalaries(c fiber.Ctx) error {
 
 	return c.JSON(salaries)
 }
+func (h *SalaryHandler) UpdateSalary(c fiber.Ctx) error {
+
+	teacherID := c.Params("teacherId")
+
+	var data models.UpdateSalary
+
+	if err := c.Bind().Body(&data); err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "invalid request body",
+		})
+	}
+
+	err := h.salaryService.UpdateSalary(c.Context(), teacherID, data)
+	if err != nil {
+		status := 500
+		if err.Error() == "salary record not found for this teacher" {
+			status = 404
+		}
+		return c.Status(status).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "salary updated successfully",
+	})
+}

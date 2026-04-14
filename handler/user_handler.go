@@ -128,3 +128,132 @@ func (h *UserHandler) GetAllStudents(c fiber.Ctx) error {
 
 	return c.JSON(students)
 }
+func (h *UserHandler) DeleteStudent(c fiber.Ctx) error {
+
+	studentID := c.Params("id")
+
+	err := h.Service.DeleteStudent(c.Context(), studentID)
+	if err != nil {
+		status := 500
+		if err.Error() == "student not found" {
+			status = 404
+		}
+		return c.Status(status).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "student deleted successfully",
+	})
+}
+
+func (h *UserHandler) UpdateStudent(c fiber.Ctx) error {
+
+	studentID := c.Params("id")
+
+	var data models.UpdateStudent
+
+	if err := c.Bind().Body(&data); err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "invalid request body",
+		})
+	}
+
+	err := h.Service.UpdateStudent(c.Context(), studentID, data)
+	if err != nil {
+		status := 500
+		if err.Error() == "student not found" {
+			status = 404
+		}
+		return c.Status(status).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "student updated successfully",
+	})
+}
+
+// BlockStudent handles both block and unblock via ?action=block or ?action=unblock
+func (h *UserHandler) BlockStudent(c fiber.Ctx) error {
+
+	studentID := c.Params("id")
+	action := c.Query("action") // "block" or "unblock"
+
+	if action != "block" && action != "unblock" {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "query param 'action' must be 'block' or 'unblock'",
+		})
+	}
+
+	block := action == "block"
+
+	err := h.Service.BlockStudent(c.Context(), studentID, block)
+	if err != nil {
+		status := 500
+		if err.Error() == "student not found" {
+			status = 404
+		}
+		return c.Status(status).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	msg := "student blocked successfully"
+	if !block {
+		msg = "student unblocked successfully"
+	}
+
+	return c.JSON(fiber.Map{
+		"message": msg,
+	})
+}
+func (h *UserHandler) DeleteTeacher(c fiber.Ctx) error {
+
+	teacherID := c.Params("id")
+
+	err := h.Service.DeleteTeacher(c.Context(), teacherID)
+	if err != nil {
+		status := 500
+		if err.Error() == "teacher not found" {
+			status = 404
+		}
+		return c.Status(status).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "teacher deleted successfully",
+	})
+}
+
+func (h *UserHandler) UpdateTeacher(c fiber.Ctx) error {
+
+	teacherID := c.Params("id")
+
+	var data models.UpdateTeacher
+
+	if err := c.Bind().Body(&data); err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "invalid request body",
+		})
+	}
+
+	err := h.Service.UpdateTeacher(c.Context(), teacherID, data)
+	if err != nil {
+		status := 500
+		if err.Error() == "teacher not found" {
+			status = 404
+		}
+		return c.Status(status).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "teacher updated successfully",
+	})
+}
