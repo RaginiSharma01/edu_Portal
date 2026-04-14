@@ -435,3 +435,21 @@ func (r *UserRepo) UpdateTeacher(ctx context.Context, teacherID string, data mod
 
 	return tx.Commit(ctx)
 }
+func (r *UserRepo) UpdatePassword(ctx context.Context, email string, hashedPassword string) error {
+
+	result, err := r.DB.Exec(ctx,
+		`UPDATE users SET password = $1 WHERE email = $2`,
+		hashedPassword,
+		email,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	if result.RowsAffected() == 0 {
+		return errors.New("user not found")
+	}
+
+	return nil
+}

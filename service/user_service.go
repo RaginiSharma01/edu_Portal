@@ -345,23 +345,54 @@ func (s *UserService) UpdateTeacher(ctx context.Context, teacherID string, data 
 	return s.userRepo.UpdateTeacher(ctx, teacherID, data)
 }
 
-// func (s *UserService) VerifyOTP(ctx context.Context, email string, otp string) error {
+// forget and reset password
 
-// 	storedOTP, err := s.redis.Get(ctx, "otp:"+email).Result()
-// 	if err != nil {
-// 		return errors.New("otp expired or not found")
-// 	}
+func (s *UserService) ForgotPassword(ctx context.Context, email string) error {
 
-// 	if storedOTP != otp {
-// 		return errors.New("invalid otp")
-// 	}
+	if email == "" {
+		return errors.New("email is required")
+	}
 
-// 	s.redis.Del(ctx, "otp:"+email)
+	_, err := s.userRepo.GetUserByEmail(ctx, email)
+	if err != nil {
+		return nil // silent — don't reveal if email exists
+	}
 
-// 	err = s.userRepo.VerifyUser(ctx, email)
-// 	if err != nil {
-// 		return err
-// 	}
+	otp := utils.GenerateOTP()
 
-// 	return nil
-// }
+	err = utils.StoreOTP(ctx, s.redis, "reset:"+email, otp)
+	if err != nil {
+		return err
+	}
+
+	return utils.SendOTPEmail(email, otp)
+}
+
+func (s *UserService) ResetPassword(ctx context.Context, req models.ResetPasswordRequest) error {
+
+	if req.Email == "" || req.OTP == "" || req.NewPassword == "" {
+		return errors.New("email, otp and new password are required")
+	}
+
+	if len(req.NewPassword) < 8 {
+		return errors.New("password must be at least 8 characters")
+	}
+
+	storedOTP, err := s.redis.Get(ctx, "otp:reset:"+req.Email).Result()
+	if err != nil {
+		return errors.New("otp expired or not found")
+	}
+
+	if storedOTP != req.OTP {
+		return errors.New("invalid otp")
+	}
+
+	s.redis.Del(ctx, "otp:reset:"+req.Email)
+
+	hashedPassword, err := utils.HashPassword(req.NewPassword)
+	if err != nil {
+		return err
+	}
+
+	return s.userRepo.UpdatePassword(ctx, req.Email, hashedPassword)
+}

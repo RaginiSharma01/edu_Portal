@@ -257,3 +257,46 @@ func (h *UserHandler) UpdateTeacher(c fiber.Ctx) error {
 		"message": "teacher updated successfully",
 	})
 }
+func (h *UserHandler) ForgotPassword(c fiber.Ctx) error {
+
+	var req models.ForgotPasswordRequest
+
+	if err := c.Bind().Body(&req); err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "invalid request body",
+		})
+	}
+
+	err := h.Service.ForgotPassword(c.Context(), req.Email)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "if this email exists, an OTP has been sent",
+	})
+}
+
+func (h *UserHandler) ResetPassword(c fiber.Ctx) error {
+
+	var req models.ResetPasswordRequest
+
+	if err := c.Bind().Body(&req); err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "invalid request body",
+		})
+	}
+
+	err := h.Service.ResetPassword(c.Context(), req)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "password reset successfully",
+	})
+}

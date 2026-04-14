@@ -30,6 +30,8 @@ func SetupUserRoutes(
 
 	onboarding.Post("/verify-otp", userHandler.VerifyOTP)
 	onboarding.Post("/login", userHandler.Login)
+	onboarding.Post("/forgot-password", userHandler.ForgotPassword)
+	onboarding.Post("/reset-password", userHandler.ResetPassword)
 
 	// classroom routes
 	// admin only — create, manage, delete classrooms
