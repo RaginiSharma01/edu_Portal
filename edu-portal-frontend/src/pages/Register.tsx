@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { signupApi } from "../services/authApi";
 import OTPModal from "../components/Auth/OTPModal";
 import "./Register.css";
 
 const Register = () => {
-  const { role } = useParams();
+  //const { role } = useParams();
   const navigate = useNavigate();
   const [showOtp, setShowOtp] = useState(false);
   const [userType, setUserType] = useState<"student" | "teacher">("student");
