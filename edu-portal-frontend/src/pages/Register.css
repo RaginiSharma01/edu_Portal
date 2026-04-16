@@ -1,0 +1,121 @@
+.register-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  padding: 40px 20px;
+}
+
+.register-card {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+}
+
+.register-title {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.register-subtitle {
+  color: #666;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+.role-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 12px;
+}
+
+.tab-btn {
+  padding: 8px 24px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+  transition: all 0.3s;
+}
+
+.tab-btn.active {
+  color: #4F46E5;
+  border-bottom: 2px solid #4F46E5;
+  margin-bottom: -13px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.register-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.form-row .register-input {
+  margin-bottom: 0;
+}
+
+.register-input:focus {
+  outline: none;
+  border-color: #4F46E5;
+}
+
+.register-input[readonly] {
+  background-color: #f9f9f9;
+}
+
+.register-btn {
+  width: 100%;
+  padding: 14px;
+  background: #4F46E5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 16px;
+}
+
+.register-btn:hover {
+  background: #4338CA;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+  color: #666;
+  font-size: 14px;
+}
+
+.login-link a {
+  color: #4F46E5;
+  text-decoration: none;
+}
+
+@media (max-width: 640px) {
+  .register-card {
+    padding: 24px;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

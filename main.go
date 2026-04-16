@@ -8,6 +8,7 @@ import (
 	"smp/wire"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/cors"
 )
 
 func main() {
@@ -18,6 +19,11 @@ func main() {
 
 	app := fiber.New()
 
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"http://localhost:5173"},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders: []string{"Origin", "Content-Type", "Accept", "Authorization"},
+	}))
 	handlers := wire.InitializeHandlers()
 
 	routes.SetupUserRoutes(app,
@@ -30,8 +36,3 @@ func main() {
 
 	log.Fatal(app.Listen(cfg.ServerPort))
 }
-
-// func main() {
-// 	hash, _ := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
-// 	fmt.Println(string(hash))
-// }
