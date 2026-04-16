@@ -1,19 +1,24 @@
 package handler
 
 import (
+	"fmt"
 	"smp/models"
 	"smp/service"
+	"smp/utils"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type EventHandler struct {
 	eventService *service.EventService
+	DB           *pgxpool.Pool
 }
 
-func NewEventHandler(s *service.EventService) *EventHandler {
+func NewEventHandler(s *service.EventService, db *pgxpool.Pool) *EventHandler {
 	return &EventHandler{
 		eventService: s,
+		DB:           db,
 	}
 }
 
@@ -33,6 +38,10 @@ func (h *EventHandler) CreateEvent(c fiber.Ctx) error {
 			"error": "failed to create event",
 		})
 	}
+	go utils.LogActivity(h.DB,
+		fmt.Sprintf("Event created: %s", req.Title),
+		"event",
+	)
 
 	return c.JSON(fiber.Map{
 		"message":  "event created successfully",

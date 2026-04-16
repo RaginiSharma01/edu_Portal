@@ -8,5 +8,6 @@ type Handlers struct {
 	EventHandler     *handler.EventHandler
 	SalaryHandler    *handler.SalaryHandler
 	TimetableHandler *handler.TimetableHandler
-	MarksHandler *handler.MarksHandler
+	MarksHandler     *handler.MarksHandler
+	DashboardHandler *handler.DashboardHandler
 }

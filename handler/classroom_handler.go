@@ -1,18 +1,25 @@
 package handler
 
 import (
+	"fmt"
 	"smp/models"
 	"smp/service"
+	"smp/utils"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type ClassroomHandler struct {
 	service *service.ClassroomService
+	DB      *pgxpool.Pool
 }
 
-func NewClassroomHandler(service *service.ClassroomService) *ClassroomHandler {
-	return &ClassroomHandler{service: service}
+func NewClassroomHandler(service *service.ClassroomService, db *pgxpool.Pool) *ClassroomHandler {
+	return &ClassroomHandler{
+		service: service,
+		DB:      db,
+	}
 }
 
 func (h *ClassroomHandler) CreateClassroom(c fiber.Ctx) error {
@@ -31,7 +38,10 @@ func (h *ClassroomHandler) CreateClassroom(c fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
-
+	go utils.LogActivity(h.DB,
+		fmt.Sprintf("New classroom created: %s", req.Name),
+		"classroom",
+	)
 	return c.Status(201).JSON(fiber.Map{
 		"message": "classroom created successfully",
 		"id":      id,
@@ -127,6 +137,11 @@ func (h *ClassroomHandler) DeleteClassroom(c fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
+
+	go utils.LogActivity(h.DB,
+		fmt.Sprintf("Classroom deleted: %s", classroomID),
+		"classroom",
+	)
 
 	return c.JSON(fiber.Map{
 		"message": "classroom deleted successfully",

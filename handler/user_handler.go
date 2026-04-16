@@ -1,14 +1,18 @@
 package handler
 
 import (
+	"fmt"
 	"smp/models"
 	"smp/service"
+	"smp/utils"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type UserHandler struct {
 	Service *service.UserService
+	DB      *pgxpool.Pool
 }
 
 func NewUserHandler(service *service.UserService) *UserHandler {
@@ -33,6 +37,11 @@ func (h *UserHandler) OnboardTeacher(c fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
+
+	go utils.LogActivity(h.DB,
+		fmt.Sprintf("New Teacher enrolled: %s", user.FirstName),
+		"teacher",
+	)
 
 	return c.JSON(fiber.Map{
 		"message": "OTP sent to email",
@@ -100,9 +109,15 @@ func (h *UserHandler) OnboardStudent(c fiber.Ctx) error {
 		})
 	}
 
+	go utils.LogActivity(h.DB,
+		fmt.Sprintf("New Student has enrolled: %s", student.FirstName),
+		"student",
+	)
+
 	return c.JSON(fiber.Map{
 		"message": "OTP sent to email",
 		"user_id": userID,
+		
 	})
 }
 func (h *UserHandler) GetAllTeachers(c fiber.Ctx) error {

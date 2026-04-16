@@ -5,10 +5,12 @@ import (
 	"smp/service"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type TimetableHandler struct {
 	timetableService *service.TimetableService
+	DB               *pgxpool.Pool
 }
 
 func NewTimetableHandler(service *service.TimetableService) *TimetableHandler {

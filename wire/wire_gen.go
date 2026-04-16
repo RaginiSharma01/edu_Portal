@@ -26,10 +26,10 @@ func InitializeHandlers() *Handlers {
 	userHandler := handler.NewUserHandler(userService)
 	classroomRepo := repository.NewClassroomRepo(pool)
 	classroomService := service.NewClassroomService(classroomRepo)
-	classroomHandler := handler.NewClassroomHandler(classroomService)
+	classroomHandler := handler.NewClassroomHandler(classroomService, pool)
 	eventRepo := repository.NewEventRepository(pool)
 	eventService := service.NewEventService(eventRepo)
-	eventHandler := handler.NewEventHandler(eventService)
+	eventHandler := handler.NewEventHandler(eventService, pool)
 	salaryRepository := repository.NewSalaryRepository(pool)
 	salaryService := service.NewSalaryService(salaryRepository)
 	salaryHandler := handler.NewSalaryHandler(salaryService)
@@ -39,6 +39,9 @@ func InitializeHandlers() *Handlers {
 	marksRepository := repository.NewMarksRepository(pool)
 	marksService := service.NewMarksService(marksRepository)
 	marksHandler := handler.NewMarksHandler(marksService)
+	adminDashboardRepository := repository.NewDashboardRepository(pool)
+	dashboardService := service.NewDashboardService(adminDashboardRepository)
+	dashboardHandler := handler.NewDashboardHandler(dashboardService)
 	handlers := &Handlers{
 		UserHandler:      userHandler,
 		ClassroomHandler: classroomHandler,
@@ -46,6 +49,7 @@ func InitializeHandlers() *Handlers {
 		SalaryHandler:    salaryHandler,
 		TimetableHandler: timetableHandler,
 		MarksHandler:     marksHandler,
+		DashboardHandler: dashboardHandler,
 	}
 	return handlers
 }
