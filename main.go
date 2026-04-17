@@ -33,7 +33,8 @@ func main() {
 		handlers.SalaryHandler,
 		handlers.TimetableHandler,
 		handlers.MarksHandler,
-		handlers.DashboardHandler)
+		handlers.DashboardHandler,
+		handlers.TeacherDashboardHandler)
 
 	log.Fatal(app.Listen(cfg.ServerPort))
 }

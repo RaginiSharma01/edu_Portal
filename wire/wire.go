@@ -48,6 +48,10 @@ func InitializeHandlers() *Handlers {
 		service.NewDashboardService,
 		handler.NewDashboardHandler,
 
+		repository.NewTeacherDashboardRepository,
+		service.NewTeacherDashboardService,
+		handler.NewTeacherDashboardHandler,
+
 		wire.Struct(new(Handlers), "*"),
 	)
 

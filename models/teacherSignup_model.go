@@ -49,3 +49,6 @@ type UpdateSalary struct {
 	Allowance     int    `json:"allowance"`
 	EffectiveFrom string `json:"effectiveFrom"`
 }
+
+
+

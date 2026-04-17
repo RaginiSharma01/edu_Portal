@@ -24,3 +24,6 @@ type Events struct {
 	Date     time.Time `json:"date"`
 	Location string    `json:"location"`
 }
+
+
+

@@ -16,6 +16,7 @@ func SetupUserRoutes(
 	timetableHandler *handler.TimetableHandler,
 	marksheetHandler *handler.MarksHandler,
 	dashboardHandler *handler.DashboardHandler,
+	TeacherDashboard *handler.TeacherDashboardHandler,
 ) {
 
 	api := app.Group("/api")
@@ -86,4 +87,11 @@ func SetupUserRoutes(
 
 	dashboard := v1.Group("/dashboard", middleware.AdminOnly())
 	dashboard.Get("/admin", dashboardHandler.GetAdminDashboard)
+
+
+	
+	//teacher dashboard
+
+	dashboardTeacher := v1.Group("/dashboard")
+	dashboardTeacher.Post("/teacher", TeacherDashboard.GetTeacherDashboard)
 }

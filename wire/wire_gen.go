@@ -42,14 +42,18 @@ func InitializeHandlers() *Handlers {
 	adminDashboardRepository := repository.NewDashboardRepository(pool)
 	dashboardService := service.NewDashboardService(adminDashboardRepository)
 	dashboardHandler := handler.NewDashboardHandler(dashboardService)
+	teacherDashboardRepository := repository.NewTeacherDashboardRepository(pool)
+	teacherDashboardService := service.NewTeacherDashboardService(teacherDashboardRepository)
+	teacherDashboardHandler := handler.NewTeacherDashboardHandler(teacherDashboardService)
 	handlers := &Handlers{
-		UserHandler:      userHandler,
-		ClassroomHandler: classroomHandler,
-		EventHandler:     eventHandler,
-		SalaryHandler:    salaryHandler,
-		TimetableHandler: timetableHandler,
-		MarksHandler:     marksHandler,
-		DashboardHandler: dashboardHandler,
+		UserHandler:             userHandler,
+		ClassroomHandler:        classroomHandler,
+		EventHandler:            eventHandler,
+		SalaryHandler:           salaryHandler,
+		TimetableHandler:        timetableHandler,
+		MarksHandler:            marksHandler,
+		DashboardHandler:        dashboardHandler,
+		TeacherDashboardHandler: teacherDashboardHandler,
 	}
 	return handlers
 }
