@@ -1,6 +1,3 @@
-// dashboard of Admin
-// dashboard of students
-// dasdboard of teachers
 package repository
 
 import (
@@ -18,7 +15,7 @@ func NewDashboardRepository(pool *pgxpool.Pool) *AdminDashboardRepository {
 	return &AdminDashboardRepository{DB: pool}
 }
 
-// SUMMARY 
+// SUMMARY
 func (r *AdminDashboardRepository) GetSummary() (map[string]int, error) {
 	var students, teachers, classrooms, events int
 
@@ -42,7 +39,7 @@ func (r *AdminDashboardRepository) GetSummary() (map[string]int, error) {
 	}, nil
 }
 
-//  RECENT ACTIVITY 
+// RECENT ACTIVITY
 func (r *AdminDashboardRepository) GetRecentActivities() ([]string, error) {
 
 	rows, err := r.DB.Query(context.Background(), `
@@ -69,7 +66,7 @@ func (r *AdminDashboardRepository) GetRecentActivities() ([]string, error) {
 	return activities, nil
 }
 
-//  EVENTS 
+// EVENTS
 func (r *AdminDashboardRepository) GetUpcomingEvents() ([]models.Events, error) {
 
 	rows, err := r.DB.Query(context.Background(), `
@@ -97,7 +94,7 @@ func (r *AdminDashboardRepository) GetUpcomingEvents() ([]models.Events, error) 
 	return events, nil
 }
 
-//  FINAL DASHBOARD 
+// FINAL DASHBOARD
 func (r *AdminDashboardRepository) GetDashboard() (map[string]interface{}, error) {
 
 	summary, err := r.GetSummary()
@@ -122,25 +119,23 @@ func (r *AdminDashboardRepository) GetDashboard() (map[string]interface{}, error
 	}, nil
 }
 
-
-// teacher dash board 
+// teacher dash board
 
 //summary
-	// my students , students of the class teacher.
-	// subjects teaching
-	//pending marks need to be assingned
-	//events
+// my students , students of the class teacher.
+// subjects teaching
+//pending marks need to be assingned
+//events
 
 //recent activity.
 
 //student dash board
 
-
-//summary 
-	//overall percentage
-	// classmates
-	//subjects
-	//events
+//summary
+//overall percentage
+// classmates
+//subjects
+//events
 
 //recent activity---> not needed
 //upcoming events
