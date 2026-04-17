@@ -68,6 +68,8 @@ func SetupUserRoutes(
 	marksheet := v1.Group("/marksheet")
 	marksheet.Post("/create", marksheetHandler.CreateMarks)
 	marksheet.Get("/get", marksheetHandler.GetMarks)
+	marksheet.Get("/marks/pdf", marksheetHandler.DownloadMarksPDF)
+	marksheet.Get("/:id/pdf", marksheetHandler.DownloadStudentPDF)
 
 	// fetch routes
 	getUsers := v1.Group("/fetch")
@@ -88,8 +90,6 @@ func SetupUserRoutes(
 	dashboard := v1.Group("/dashboard", middleware.AdminOnly())
 	dashboard.Get("/admin", dashboardHandler.GetAdminDashboard)
 
-
-	
 	//teacher dashboard
 
 	dashboardTeacher := v1.Group("/dashboard")

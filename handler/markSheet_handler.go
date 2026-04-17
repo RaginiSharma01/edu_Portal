@@ -1,3 +1,84 @@
+// package handler
+
+// import (
+// 	"smp/models"
+// 	"smp/service"
+
+// 	"github.com/gofiber/fiber/v3"
+// )
+
+// type MarksHandler struct {
+// 	marksService *service.MarksService
+// }
+
+// func NewMarksHandler(service *service.MarksService) *MarksHandler {
+// 	return &MarksHandler{
+// 		marksService: service,
+// 	}
+// }
+
+// func (h *MarksHandler) CreateMarks(c fiber.Ctx) error {
+
+// 	var req models.CreateMarks
+
+// 	if err := c.Bind().Body(&req); err != nil {
+// 		return c.Status(400).JSON(fiber.Map{
+// 			"error": "invalid request",
+// 		})
+// 	}
+
+// 	err := h.marksService.CreateMarks(c.Context(), req)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	return c.JSON(fiber.Map{
+// 		"message": "marks saved successfully",
+// 	})
+// }
+
+// func (h *MarksHandler) GetMarks(c fiber.Ctx) error {
+
+// 	term := c.Query("term")
+
+// 	marks, err := h.marksService.GetMarks(c.Context(), term)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	return c.JSON(marks)
+// }
+
+// func (h *MarksHandler) DownloadStudentPDF(c fiber.Ctx) error {
+
+// 	studentID := c.Params("id")
+// 	term := c.Query("term")
+
+// 	pdfBytes, err := h.marksService.GenerateStudentPDF(c.Context(), studentID, term)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	c.Set("Content-Type", "application/pdf")
+// 	c.Set("Content-Disposition", "attachment; filename=marksheet.pdf")
+
+// 	return c.Send(pdfBytes)
+// }
+// func (h *MarksHandler) DownloadMarksPDF(c fiber.Ctx) error {
+
+// 	term := c.Query("term")
+
+// 	pdfBytes, err := h.marksService.GenerateMarksPDF(c.Context(), term)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	c.Set("Content-Type", "application/pdf")
+// 	c.Set("Content-Disposition", "attachment; filename=marksheet.pdf")
+
+// 	return c.Send(pdfBytes)
+// }
+
 package handler
 
 import (
@@ -22,17 +103,18 @@ func (h *MarksHandler) CreateMarks(c fiber.Ctx) error {
 	var req models.CreateMarks
 
 	if err := c.Bind().Body(&req); err != nil {
-		return c.Status(400).JSON(fiber.Map{
-			"error": "invalid request",
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "invalid request body",
 		})
 	}
 
-	err := h.marksService.CreateMarks(c.Context(), req)
-	if err != nil {
-		return err
+	if err := h.marksService.CreateMarks(c.Context(), req); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
-	return c.JSON(fiber.Map{
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "marks saved successfully",
 	})
 }
@@ -40,11 +122,73 @@ func (h *MarksHandler) CreateMarks(c fiber.Ctx) error {
 func (h *MarksHandler) GetMarks(c fiber.Ctx) error {
 
 	term := c.Query("term")
+	if term == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "term query param is required",
+		})
+	}
 
 	marks, err := h.marksService.GetMarks(c.Context(), term)
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
 	return c.JSON(marks)
+}
+
+// ✅ Download PDF for a single student by ID
+func (h *MarksHandler) DownloadStudentPDF(c fiber.Ctx) error {
+
+	studentID := c.Params("id")
+	term := c.Query("term")
+
+	if studentID == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "student id param is required",
+		})
+	}
+
+	if term == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "term query param is required",
+		})
+	}
+
+	pdfBytes, err := h.marksService.GenerateStudentPDF(c.Context(), studentID, term)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	c.Set("Content-Type", "application/pdf")
+	c.Set("Content-Disposition", "attachment; filename=student_marksheet.pdf")
+
+	return c.Send(pdfBytes)
+}
+
+// ✅ Download PDF for all students in a term
+func (h *MarksHandler) DownloadMarksPDF(c fiber.Ctx) error {
+
+	term := c.Query("term")
+
+	if term == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "term query param is required",
+		})
+	}
+
+	pdfBytes, err := h.marksService.GenerateMarksPDF(c.Context(), term)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	c.Set("Content-Type", "application/pdf")
+	c.Set("Content-Disposition", "attachment; filename=class_marksheet.pdf")
+
+	return c.Send(pdfBytes)
 }
