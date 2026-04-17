@@ -53,7 +53,9 @@ func VerifyJWT(tokenString string) (jwt.MapClaims, error) {
 
 	return claims, nil
 }
+// func verifyUseId()(jwt.MapClaims,error){
 
+// }
 func GenerateVerificationToken() (string, error) {
 	b := make([]byte, 16)
 

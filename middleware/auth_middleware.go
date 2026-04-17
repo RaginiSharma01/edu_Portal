@@ -14,23 +14,44 @@ func AuthMiddleware() fiber.Handler {
 		authHeader := c.Get("Authorization")
 
 		if authHeader == "" {
-			return c.Status(401).JSON(fiber.Map{
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"error": "missing authorization header",
 			})
 		}
 
-		// Expect: Bearer <token>
-		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
-
-		claims, err := utils.VerifyJWT(tokenString)
-		if err != nil {
-			return c.Status(401).JSON(fiber.Map{
-				"error": "invalid token",
+		//  Check proper format
+		if !strings.HasPrefix(authHeader, "Bearer ") {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "invalid authorization format",
 			})
 		}
 
-		c.Locals("userID", claims["empId"])
-		c.Locals("email", claims["email"])
+		// extract token
+		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+
+		// verify JWT
+		claims, err := utils.VerifyJWT(tokenString)
+		if err != nil {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "invalid or expired token",
+			})
+		}
+
+		//  safe type assertions
+		userID, ok := claims["empId"].(string)
+		if !ok {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "invalid user id in token",
+			})
+		}
+
+		email, _ := claims["email"].(string)
+		role, _ := claims["role"].(string)
+
+		// store in context
+		c.Locals("userID", userID)
+		c.Locals("email", email)
+		c.Locals("role", role)
 
 		return c.Next()
 	}
