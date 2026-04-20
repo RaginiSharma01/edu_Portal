@@ -87,7 +87,7 @@ func SetupUserRoutes(
 	teachers.Delete("/:id", userHandler.DeleteTeacher)
 	teachers.Put("/:id", userHandler.UpdateTeacher)
 
-	dashboard := v1.Group("/dashboard", middleware.AdminOnly())
+	dashboard := v1.Group("/dashboard")
 	dashboard.Get("/admin", dashboardHandler.GetAdminDashboard)
 
 	//teacher dashboard

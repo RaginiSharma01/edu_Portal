@@ -28,6 +28,7 @@ func (h *UserHandler) OnboardTeacher(c fiber.Ctx) error {
 	var user models.TeacherOnboarding
 
 	if err := c.Bind().Body(&user); err != nil {
+		log.Println("body parse err", err)
 		return c.Status(400).JSON(fiber.Map{
 			"error": "invalid request",
 		})
@@ -35,7 +36,9 @@ func (h *UserHandler) OnboardTeacher(c fiber.Ctx) error {
 
 	userID, err := h.Service.OnboardUsers(c.Context(), user)
 	if err != nil {
+		log.Println(err)
 		return c.Status(500).JSON(fiber.Map{
+
 			"error": err.Error(),
 		})
 	}
@@ -74,16 +77,24 @@ func (h *UserHandler) VerifyOTP(c fiber.Ctx) error {
 
 func (h *UserHandler) Login(c fiber.Ctx) error {
 
+	// ADD THIS - log raw body to see what's arriving
+	log.Println("Raw body:", string(c.Body()))
+
 	var req models.LoginRequest
 
 	if err := c.Bind().Body(&req); err != nil {
+		log.Println("body parser error:", err) // this will show exact reason
 		return c.Status(400).JSON(fiber.Map{
 			"error": "invalid request",
 		})
 	}
 
+	// ADD THIS - log parsed struct
+	log.Printf("Parsed login request: email=%s\n", req.Email)
+
 	token, err := h.Service.Login(c.Context(), req.Email, req.Password)
 	if err != nil {
+		log.Println(err)
 		return c.Status(400).JSON(fiber.Map{
 			"error": err.Error(),
 		})

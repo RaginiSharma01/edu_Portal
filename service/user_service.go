@@ -34,6 +34,17 @@ func (s *UserService) OnboardUsers(ctx context.Context, user models.TeacherOnboa
 		return "", errors.New("password must be at least 8 characters")
 	}
 
+	
+	dobParsed, err := time.Parse("2006-01-02", user.DateOfBirth)
+	if err != nil {
+		return "", errors.New("invalid DOB format, use YYYY-MM-DD")
+	}
+
+	
+	if dobParsed.After(time.Now()) {
+		return "", errors.New("dob cannot be in future")
+	}
+
 	hashedPassword, err := utils.HashPassword(user.Password)
 	if err != nil {
 		return "", err
@@ -41,6 +52,7 @@ func (s *UserService) OnboardUsers(ctx context.Context, user models.TeacherOnboa
 
 	user.Password = hashedPassword
 
+	
 	userID, err := s.userRepo.OnboardingUser(ctx, user)
 	if err != nil {
 		return "", err
@@ -152,18 +164,31 @@ func (s *UserService) OnboardStudent(ctx context.Context, student models.Student
 		return "", errors.New("password must be at least 8 characters")
 	}
 
+	//  DOB parsing (core fix)
+	dobParsed, err := time.Parse("2006-01-02", student.DateOfBirth)
+	if err != nil {
+		return "", errors.New("invalid DOB format, use YYYY-MM-DD")
+	}
+
+	// optional validation
+	if dobParsed.After(time.Now()) {
+		return "", errors.New("dob cannot be in future")
+	}
+
+	// password hashing
 	hashedPassword, err := utils.HashPassword(student.Password)
 	if err != nil {
 		return "", err
 	}
-
 	student.Password = hashedPassword
 
+	// pass dobParsed to repo
 	userID, err := s.userRepo.OnboardStudent(ctx, student)
 	if err != nil {
 		return "", err
 	}
 
+	// OTP flow
 	otp := utils.GenerateOTP()
 
 	err = utils.StoreOTP(ctx, s.redis, student.Email, otp)

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"smp/models"
 	"smp/service"
 
@@ -24,6 +25,7 @@ func (h *TeacherDashboardHandler) GetTeacherDashboard(c fiber.Ctx) error {
 
 	//
 	if err := c.Bind().Body(&req); err != nil {
+		log.Println("body parser error", err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "invalid request body",
 		})
@@ -31,6 +33,7 @@ func (h *TeacherDashboardHandler) GetTeacherDashboard(c fiber.Ctx) error {
 
 	// validation
 	if req.TeacherID == "" {
+		log.Println(req)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "teacherId is required",
 		})
@@ -39,6 +42,7 @@ func (h *TeacherDashboardHandler) GetTeacherDashboard(c fiber.Ctx) error {
 	// service call
 	data, err := h.service.GetDashboard(c.Context(), req.TeacherID)
 	if err != nil {
+		log.Println(err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})

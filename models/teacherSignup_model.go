@@ -5,10 +5,12 @@ import "time"
 type TeacherOnboarding struct {
 	FirstName        string    `json:"firstName"`
 	LastName         string    `json:"lastName"`
-	Email            string    `json:"email"`
-	Phone            string    `json:"phone"`
+	
+    Email string `json:"email" validate:"required,email"`
+    Phone string `json:"phone" validate:"required,e164"`
+
 	Age              int       `json:"age"`
-	DateOfBirth      time.Time `json:"dob"`
+	DateOfBirth      string`json:"dob"`
 	Address          string    `json:"address"`
 	Qualification    string    `json:"qualification"`
 	SubjectsTeaching string    `json:"subjectsTeaching"`
