@@ -1,6 +1,7 @@
 package db
 
 import (
+	"log"
 	"smp/config"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -9,7 +10,7 @@ import (
 func ProvidePgDb(cfg *config.Config) *PgDb {
 	db, err := ConnectDb(cfg)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	return db
 }

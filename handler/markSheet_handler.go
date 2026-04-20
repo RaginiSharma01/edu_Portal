@@ -1,84 +1,3 @@
-// package handler
-
-// import (
-// 	"smp/models"
-// 	"smp/service"
-
-// 	"github.com/gofiber/fiber/v3"
-// )
-
-// type MarksHandler struct {
-// 	marksService *service.MarksService
-// }
-
-// func NewMarksHandler(service *service.MarksService) *MarksHandler {
-// 	return &MarksHandler{
-// 		marksService: service,
-// 	}
-// }
-
-// func (h *MarksHandler) CreateMarks(c fiber.Ctx) error {
-
-// 	var req models.CreateMarks
-
-// 	if err := c.Bind().Body(&req); err != nil {
-// 		return c.Status(400).JSON(fiber.Map{
-// 			"error": "invalid request",
-// 		})
-// 	}
-
-// 	err := h.marksService.CreateMarks(c.Context(), req)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	return c.JSON(fiber.Map{
-// 		"message": "marks saved successfully",
-// 	})
-// }
-
-// func (h *MarksHandler) GetMarks(c fiber.Ctx) error {
-
-// 	term := c.Query("term")
-
-// 	marks, err := h.marksService.GetMarks(c.Context(), term)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	return c.JSON(marks)
-// }
-
-// func (h *MarksHandler) DownloadStudentPDF(c fiber.Ctx) error {
-
-// 	studentID := c.Params("id")
-// 	term := c.Query("term")
-
-// 	pdfBytes, err := h.marksService.GenerateStudentPDF(c.Context(), studentID, term)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	c.Set("Content-Type", "application/pdf")
-// 	c.Set("Content-Disposition", "attachment; filename=marksheet.pdf")
-
-// 	return c.Send(pdfBytes)
-// }
-// func (h *MarksHandler) DownloadMarksPDF(c fiber.Ctx) error {
-
-// 	term := c.Query("term")
-
-// 	pdfBytes, err := h.marksService.GenerateMarksPDF(c.Context(), term)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	c.Set("Content-Type", "application/pdf")
-// 	c.Set("Content-Disposition", "attachment; filename=marksheet.pdf")
-
-// 	return c.Send(pdfBytes)
-// }
-
 package handler
 
 import (
@@ -138,7 +57,7 @@ func (h *MarksHandler) GetMarks(c fiber.Ctx) error {
 	return c.JSON(marks)
 }
 
-// ✅ Download PDF for a single student by ID
+//  Download PDF for a single student by ID
 func (h *MarksHandler) DownloadStudentPDF(c fiber.Ctx) error {
 
 	studentID := c.Params("id")

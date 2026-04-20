@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"log"
 	"smp/models"
 	"smp/service"
 	"smp/utils"
@@ -15,9 +16,10 @@ type UserHandler struct {
 	DB      *pgxpool.Pool
 }
 
-func NewUserHandler(service *service.UserService) *UserHandler {
+func NewUserHandler(service *service.UserService, db *pgxpool.Pool) *UserHandler {
 	return &UserHandler{
 		Service: service,
+		DB:      db,
 	}
 }
 
@@ -97,17 +99,23 @@ func (h *UserHandler) OnboardStudent(c fiber.Ctx) error {
 	var student models.StudentOnboarding
 
 	if err := c.Bind().Body(&student); err != nil {
+		log.Println("body parser error:", err)
 		return c.Status(400).JSON(fiber.Map{
 			"error": "invalid request",
 		})
 	}
 
+	log.Printf("Parsed student payload: %+v\n", student)
+
 	userID, err := h.Service.OnboardStudent(c.Context(), student)
 	if err != nil {
+		log.Println("onboarding student service error:", err)
 		return c.Status(500).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
+
+	log.Println("Student onboarded UserID", userID)
 
 	go utils.LogActivity(h.DB,
 		fmt.Sprintf("New Student has enrolled: %s", student.FirstName),
@@ -117,7 +125,6 @@ func (h *UserHandler) OnboardStudent(c fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"message": "OTP sent to email",
 		"user_id": userID,
-		
 	})
 }
 func (h *UserHandler) GetAllTeachers(c fiber.Ctx) error {

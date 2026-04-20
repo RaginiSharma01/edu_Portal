@@ -23,7 +23,7 @@ func InitializeHandlers() *Handlers {
 	userRepo := repository.NewUserRepo(pool)
 	client := db.ProvideRedis(configConfig)
 	userService := service.NewUserService(userRepo, client)
-	userHandler := handler.NewUserHandler(userService)
+	userHandler := handler.NewUserHandler(userService, pool)
 	classroomRepo := repository.NewClassroomRepo(pool)
 	classroomService := service.NewClassroomService(classroomRepo)
 	classroomHandler := handler.NewClassroomHandler(classroomService, pool)

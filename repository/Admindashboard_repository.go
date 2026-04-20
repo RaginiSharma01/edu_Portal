@@ -112,6 +112,8 @@ func (r *AdminDashboardRepository) GetDashboard() (map[string]interface{}, error
 		return nil, err
 	}
 
+	// map is unordered
+
 	return map[string]interface{}{
 		"summary":          summary,
 		"recentActivities": activities,
