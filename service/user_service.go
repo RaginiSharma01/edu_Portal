@@ -233,60 +233,9 @@ func (s *UserService) GetAllTeachers(ctx context.Context) (interface{}, error) {
 
 func (s *UserService) GetAllStudents(ctx context.Context) (interface{}, error) {
 
-	rows, err := s.userRepo.GetAllStudents(ctx)
+	students, err := s.userRepo.GetAllStudents(ctx)
 	if err != nil {
 		return nil, err
-	}
-	defer rows.Close()
-
-	var students []map[string]interface{}
-
-	for rows.Next() {
-		var (
-			id, firstName, lastName, email, phone, dob, address string
-			father, mother, guardian, occupation                string
-			age, height, weight                                 int
-		)
-
-		err := rows.Scan(
-			&id,
-			&firstName,
-			&lastName,
-			&email,
-			&phone,
-			&age,
-			&dob,
-			&address,
-			&father,
-			&mother,
-			&guardian,
-			&occupation,
-			&height,
-			&weight,
-		)
-
-		if err != nil {
-			return nil, err
-		}
-
-		student := map[string]interface{}{
-			"id":           id,
-			"firstName":    firstName,
-			"lastName":     lastName,
-			"email":        email,
-			"phone":        phone,
-			"age":          age,
-			"dob":          dob,
-			"address":      address,
-			"fatherName":   father,
-			"motherName":   mother,
-			"guardianName": guardian,
-			"occupation":   occupation,
-			"height":       height,
-			"weight":       weight,
-		}
-
-		students = append(students, student)
 	}
 
 	return students, nil

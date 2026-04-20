@@ -208,7 +208,7 @@ func (r *UserRepo) GetAllTeachers(ctx context.Context) (pgx.Rows, error) {
 	return rows, nil
 }
 
-func (r *UserRepo) GetAllStudents(ctx context.Context) (pgx.Rows, error) {
+func (r *UserRepo) GetAllStudents(ctx context.Context) ([]models.Student, error) {
 
 	query := `
 	SELECT 
@@ -234,8 +234,41 @@ func (r *UserRepo) GetAllStudents(ctx context.Context) (pgx.Rows, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
-	return rows, nil
+	var students []models.Student
+
+	for rows.Next() {
+		var s models.Student
+
+		err := rows.Scan(
+			&s.ID,
+			&s.FirstName,
+			&s.LastName,
+			&s.Email,
+			&s.Phone,
+			&s.Age,
+			&s.DateOfBirth, 
+			&s.Address,
+			&s.FatherName,
+			&s.MotherName,
+			&s.GuardianName,
+			&s.Occupation,
+			&s.Height,
+			&s.Weight,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		students = append(students, s)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return students, nil
 }
 
 // DeleteStudent hard-deletes a student by user ID
