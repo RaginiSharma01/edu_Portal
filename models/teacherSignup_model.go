@@ -1,26 +1,28 @@
 package models
 
+import "time"
+
 type TeacherOnboarding struct {
-	FirstName        string `json:"firstName"`
-	LastName         string `json:"lastName"`
-	Email            string `json:"email"`
-	Phone            string `json:"phone"`
-	Age              int    `json:"age"`
-	DateOfBirth      string `json:"dob"`
-	Address          string `json:"address"`
-	Qualification    string `json:"qualification"`
-	SubjectsTeaching string `json:"subjectsTeaching"`
-	Password         string `json:"password"`
+	FirstName        string    `json:"firstName"`
+	LastName         string    `json:"lastName"`
+	Email            string    `json:"email"`
+	Phone            string    `json:"phone"`
+	Age              int       `json:"age"`
+	DateOfBirth      time.Time `json:"dob"`
+	Address          string    `json:"address"`
+	Qualification    string    `json:"qualification"`
+	SubjectsTeaching string    `json:"subjectsTeaching"`
+	Password         string    `json:"password"`
 }
 type UpdateTeacher struct {
-	FirstName        string `json:"firstName"`
-	LastName         string `json:"lastName"`
-	Phone            string `json:"phone"`
-	Age              int    `json:"age"`
-	DateOfBirth      string `json:"dob"`
-	Address          string `json:"address"`
-	Qualification    string `json:"qualification"`
-	SubjectsTeaching string `json:"subjectsTeaching"`
+	FirstName        string    `json:"firstName"`
+	LastName         string    `json:"lastName"`
+	Phone            string    `json:"phone"`
+	Age              int       `json:"age"`
+	DateOfBirth      time.Time `json:"dob"`
+	Address          string    `json:"address"`
+	Qualification    string    `json:"qualification"`
+	SubjectsTeaching string    `json:"subjectsTeaching"`
 }
 type User struct {
 	ID         string `json:"id"`
@@ -49,6 +51,15 @@ type UpdateSalary struct {
 	Allowance     int    `json:"allowance"`
 	EffectiveFrom string `json:"effectiveFrom"`
 }
-
-
-
+type TeacherResponse struct {
+	ID               string `json:"id"`
+	FirstName        string `json:"firstName"`
+	LastName         string `json:"lastName"`
+	Email            string `json:"email"`
+	Phone            string `json:"phone"`
+	Age              int    `json:"age"`
+	DOB              string `json:"dob"`
+	Address          string `json:"address"`
+	Qualification    string `json:"qualification"`
+	SubjectsTeaching string `json:"subjectsTeaching"`
+}

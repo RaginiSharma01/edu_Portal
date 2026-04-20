@@ -7,6 +7,7 @@ import (
 	"smp/models"
 	"smp/repository"
 	"smp/utils"
+	"time"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -186,13 +187,15 @@ func (s *UserService) GetAllTeachers(ctx context.Context) (interface{}, error) {
 	}
 	defer rows.Close()
 
-	var teachers []map[string]interface{}
+	var teachers []models.TeacherResponse
 
 	for rows.Next() {
 		var (
-			id, firstName, lastName, email, phone, dob, address string
-			qualification, subjects                             string
-			age                                                 int
+			id                                         string
+			firstName, lastName, email, phone, address string
+			qualification, subjects                    string
+			age                                        int
+			dob                                        time.Time
 		)
 
 		err := rows.Scan(
@@ -212,17 +215,17 @@ func (s *UserService) GetAllTeachers(ctx context.Context) (interface{}, error) {
 			return nil, err
 		}
 
-		teacher := map[string]interface{}{
-			"id":               id,
-			"firstName":        firstName,
-			"lastName":         lastName,
-			"email":            email,
-			"phone":            phone,
-			"age":              age,
-			"dob":              dob,
-			"address":          address,
-			"qualification":    qualification,
-			"subjectsTeaching": subjects,
+		teacher := models.TeacherResponse{
+			ID:               id,
+			FirstName:        firstName,
+			LastName:         lastName,
+			Email:            email,
+			Phone:            phone,
+			Age:              age,
+			DOB:              dob.Format("2006-01-02"),
+			Address:          address,
+			Qualification:    qualification,
+			SubjectsTeaching: subjects,
 		}
 
 		teachers = append(teachers, teacher)
@@ -230,7 +233,6 @@ func (s *UserService) GetAllTeachers(ctx context.Context) (interface{}, error) {
 
 	return teachers, nil
 }
-
 func (s *UserService) GetAllStudents(ctx context.Context) (interface{}, error) {
 
 	students, err := s.userRepo.GetAllStudents(ctx)
