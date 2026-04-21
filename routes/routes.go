@@ -17,6 +17,7 @@ func SetupUserRoutes(
 	marksheetHandler *handler.MarksHandler,
 	dashboardHandler *handler.DashboardHandler,
 	TeacherDashboard *handler.TeacherDashboardHandler,
+	StudentDashboard *handler.StudentDashboardHandler,
 ) {
 
 	api := app.Group("/api")
@@ -87,11 +88,16 @@ func SetupUserRoutes(
 	teachers.Delete("/:id", userHandler.DeleteTeacher)
 	teachers.Put("/:id", userHandler.UpdateTeacher)
 
-	dashboard := v1.Group("/dashboard")
+	dashboard := v1.Group("/dashboard",middleware.AuthMiddleware())
 	dashboard.Get("/admin", dashboardHandler.GetAdminDashboard)
 
 	//teacher dashboard
 
-	dashboardTeacher := v1.Group("/dashboard")
+	dashboardTeacher := v1.Group("/dashboard",middleware.AuthMiddleware())
 	dashboardTeacher.Post("/teacher", TeacherDashboard.GetTeacherDashboard)
+
+	//student
+
+	dashboardStudent := v1.Group("/dashboard",middleware.AuthMiddleware())
+	dashboardStudent.Post("/student", StudentDashboard.GetStudentDashboard)
 }

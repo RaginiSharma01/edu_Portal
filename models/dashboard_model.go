@@ -29,3 +29,24 @@ type TeacherDashboard struct {
 type DashboardRequest struct {
 	TeacherID string `json:"teacherId"`
 }
+
+//student
+
+type StudentDashboard struct {
+	Summary        StudentSummary   `json:"summary"`
+	UpcomingEvents []DashboardEvent `json:"upcomingEvents"`
+}
+
+type StudentSummary struct {
+	Subjects int `json:"subjects"`
+	Events   int `json:"events"`
+}
+
+// type DashboardEvent struct {
+// 	Title    string `json:"title"`
+// 	Date     string `json:"date"`
+// 	Location string `json:"location"`
+// }
+type StudentDashboardRequest struct {
+	StudentID string `json:"studentId"`
+}

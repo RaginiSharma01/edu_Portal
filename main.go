@@ -34,7 +34,9 @@ func main() {
 		handlers.TimetableHandler,
 		handlers.MarksHandler,
 		handlers.DashboardHandler,
-		handlers.TeacherDashboardHandler)
+		handlers.TeacherDashboardHandler,
+		handlers.StudentDashboard,
+	)
 
 	log.Fatal(app.Listen(cfg.ServerPort))
 }

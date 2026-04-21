@@ -11,4 +11,5 @@ type Handlers struct {
 	MarksHandler            *handler.MarksHandler
 	DashboardHandler        *handler.DashboardHandler
 	TeacherDashboardHandler *handler.TeacherDashboardHandler
+	StudentDashboard        *handler.StudentDashboardHandler
 }
