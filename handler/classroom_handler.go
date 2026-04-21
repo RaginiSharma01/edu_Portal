@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"log"
 	"smp/models"
 	"smp/service"
 	"smp/utils"
@@ -27,6 +28,7 @@ func (h *ClassroomHandler) CreateClassroom(c fiber.Ctx) error {
 	var req models.CreateClassroom
 
 	if err := c.Bind().Body(&req); err != nil {
+		log.Println("Body parser error", err)
 		return c.Status(400).JSON(fiber.Map{
 			"error": "invalid request body",
 		})
@@ -34,6 +36,7 @@ func (h *ClassroomHandler) CreateClassroom(c fiber.Ctx) error {
 
 	id, err := h.service.CreateClassroom(c.Context(), req)
 	if err != nil {
+		log.Println("Error comming from service", err)
 		return c.Status(500).JSON(fiber.Map{
 			"error": err.Error(),
 		})
@@ -85,6 +88,7 @@ func (h *ClassroomHandler) AddStudentsToClassroom(c fiber.Ctx) error {
 	var req models.AddStudentsToClassroom
 
 	if err := c.Bind().Body(&req); err != nil {
+		log.Println("body parser error in adding the student in the classroom", err)
 		return c.Status(400).JSON(fiber.Map{
 			"error": "invalid request body",
 		})

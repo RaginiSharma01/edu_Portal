@@ -15,6 +15,7 @@ func NewClassroomService(repo *repository.ClassroomRepo) *ClassroomService {
 	return &ClassroomService{repo: repo}
 }
 
+//both admin and teacher cn create the class room 
 func (s *ClassroomService) CreateClassroom(ctx context.Context, req models.CreateClassroom) (string, error) {
 
 	if req.Name == "" {

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"smp/models"
 	"smp/service"
 
@@ -22,6 +23,7 @@ func (h *SalaryHandler) CreateSalary(c fiber.Ctx) error {
 	var req models.CreateSalary
 
 	if err := c.Bind().Body(&req); err != nil {
+		log.Println("body parser err" , err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "invalid request body",
 		})
@@ -29,6 +31,7 @@ func (h *SalaryHandler) CreateSalary(c fiber.Ctx) error {
 
 	err := h.salaryService.CreateSalary(c.Context(), req)
 	if err != nil {
+		log.Println(err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "failed to create salary",
 		})
