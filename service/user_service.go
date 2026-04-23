@@ -126,7 +126,7 @@ func (s *UserService) Login(ctx context.Context, email string, password string) 
 
 		err = utils.StoreOTP(ctx, s.redis, email, otp)
 		if err != nil {
-			fmt.Println("err", err)
+			fmt.Println("err", err) 
 			return "", err
 		}
 
